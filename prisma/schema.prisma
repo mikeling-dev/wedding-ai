@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String       @id @default(uuid())
+  googleId       String       @unique
+  email          String       @unique
+  name           String?
+  subscription   Tier         @default(BASIC)
+  partnerId      String?      @unique // Foreign key to partner's id
+  partner        User?        @relation("PartnerRelation", fields: [partnerId], references: [id])
+  inversePartner User?        @relation("PartnerRelation")
+  weddingId      String?
+  wedding        Wedding?     @relation(fields: [weddingId], references: [id])
+  sentInvitations Invitation[] @relation("SentInvitations")     // Invitations this user sent
+  receivedInvitations Invitation[] @relation("ReceivedInvitations") // Invitations this user received
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  vendor         Vendor?      // Optional: If a user is also a vendor
+}
+
+enum Tier {
+  BASIC
+  PREMIUM
+}
+
+model Invitation {
+  id         String      @id @default(uuid())
+  senderId   String      // Foreign key to the sender
+  sender     User        @relation("SentInvitations", fields: [senderId], references: [id])
+  receiverId String      // Foreign key to the receiver
+  receiver   User        @relation("ReceivedInvitations", fields: [receiverId], references: [id])
+  status     InviteStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DENIED
+}
+
+model Wedding {
+  id                String    @id @default(uuid())
+  users             User[]    // Users linked to this wedding
+  date              DateTime?
+  location          String?
+  theme             String?
+  culturalBackground String?
+  religion          String?
+  guestCount        Int?
+  budget            Float?
+  specialRequests   String?   @db.Text
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  plan              Plan?
+  listings          WeddingListing[]
+}
+
+model Plan {
+  id              String    @id @default(uuid())
+  weddingId       String    @unique
+  wedding         Wedding   @relation(fields: [weddingId], references: [id])
+  overview        String    @db.Text
+  budgetBreakdown Json?
+  timeline        Json?
+  categories      Json?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  tasks           Task[]
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  planId      String
+  plan        Plan      @relation(fields: [planId], references: [id])
+  title       String
+  description String?   @db.Text
+  dueDate     DateTime?
+  isCompleted Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Vendor {
+  id          String    @id @default(uuid())
+  userId      String?   @unique // Optional: Ties a vendor to a User (if vendors are users)
+  user        User?     @relation(fields: [userId], references: [id])
+  name        String    // Vendor business name
+  email       String    @unique
+  description String?   @db.Text
+  listings    Listing[] // Vendor's offerings
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Listing {
+  id          String    @id @default(uuid())
+  vendorId    String
+  vendor      Vendor    @relation(fields: [vendorId], references: [id])
+  title       String    // e.g., "Rustic Barn Venue" or "Catering for 100"
+  description String?   @db.Text
+  category    Category  // e.g., VENUE, CATERING
+  price       Float?
+  isPremium   Boolean   @default(false) // Premium-only listing
+  weddings    WeddingListing[] // Links to weddings that booked this
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model WeddingListing {
+  id         String   @id @default(uuid())
+  weddingId  String
+  wedding    Wedding  @relation(fields: [weddingId], references: [id])
+  listingId  String
+  listing    Listing  @relation(fields: [listingId], references: [id])
+  bookedAt   DateTime @default(now())
+}
+
+enum Category {
+  VENUE
+  CATERING
+  PHOTOGRAPHY
+  FLORIST
+  ENTERTAINMENT
+  PROFESSIONALS
+  OTHER
+}
