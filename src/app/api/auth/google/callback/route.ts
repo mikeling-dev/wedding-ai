@@ -2,10 +2,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
-const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -47,8 +46,8 @@ export async function GET(req: NextRequest) {
     }
   );
   const userData = await userResponse.json();
-
-  const { id: googleId, email, name } = userData;
+  console.log(userData);
+  const { id: googleId, email, name, picture } = userData;
 
   let user;
   const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -64,7 +63,7 @@ export async function GET(req: NextRequest) {
     }
   } else {
     user = await prisma.user.create({
-      data: { googleId, email, name },
+      data: { googleId, email, name, picture },
     });
   }
 

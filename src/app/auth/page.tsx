@@ -16,8 +16,8 @@ export default function LoginPage() {
             WeddingAI
           </Link>
         </div>
-        <div className="flex flex-1 items-center justify-center align-middle mt-20 lg:mt-0">
-          <div className="w-full lg:max-w-md bg-background p-12 rounded-lg shadow-md lg:shadow-none">
+        <div className="flex flex-1 items-center justify-center align-middle mt-10 lg:mt-0">
+          <div className="w-full lg:max-w-md bg-background p-10 rounded-lg shadow-lg lg:shadow-none">
             <LoginForm />
           </div>
         </div>
@@ -25,7 +25,7 @@ export default function LoginPage() {
       <Image
         src={bgImage}
         alt="Image"
-        className="lg:hidden fixed top-0 z-0 opacity-35 h-screen w-full object-cover object-center"
+        className="lg:hidden fixed top-0 z-0 opacity-50 h-screen w-full object-cover object-center"
       />
       <div className="relative hidden bg-muted lg:block">
         <Image

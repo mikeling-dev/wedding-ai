@@ -27,8 +27,7 @@ export function useAuth() {
           } else {
             dispatch(clearAuth());
           }
-        } catch (error) {
-          console.error("Auth check failed:", error);
+        } catch {
           dispatch(clearAuth());
         }
       } else {
@@ -37,12 +36,11 @@ export function useAuth() {
     };
 
     checkAuth();
-    // router.events.on("routeChangeComplete", checkAuth);
-    // return () => router.events.off("routeChangeComplete", checkAuth);
   }, [dispatch]);
 
   const login = () => {
-    router.push("/api/auth/google");
+    // router.push("/api/auth/google");
+    window.location.href = "/api/auth/google";
   };
 
   const logout = () => {

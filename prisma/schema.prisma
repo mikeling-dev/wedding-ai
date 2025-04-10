@@ -19,6 +19,7 @@ model User {
   googleId       String       @unique
   email          String       @unique
   name           String?
+  picture        String?
   subscription   Tier         @default(BASIC)
   partnerId      String?      @unique // Foreign key to partner's id
   partner        User?        @relation("PartnerRelation", fields: [partnerId], references: [id])

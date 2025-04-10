@@ -7,7 +7,8 @@ interface AuthState {
 interface User {
   userId: string;
   email: string;
-  name: string | null;
+  picture: string | null;
+  name: string;
   subscription: "BASIC" | "PREMIUM";
   partnerId: string | null;
   weddingId: string | null;
@@ -29,7 +30,8 @@ const authSlice = createSlice({
         user: {
           userId: string;
           email: string;
-          name: string | null;
+          name: string;
+          picture: string | null;
           subscription: "BASIC" | "PREMIUM";
           partnerId: string | null;
           weddingId: string | null;

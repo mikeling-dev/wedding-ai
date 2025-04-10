@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function GET(req: NextRequest) {
@@ -23,7 +22,12 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
     return NextResponse.json({
-      user: { userId: user.id, email: user.email, name: user.name },
+      user: {
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
+      },
     });
   } catch {
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
