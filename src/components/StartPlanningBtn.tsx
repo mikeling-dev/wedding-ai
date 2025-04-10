@@ -1,5 +1,5 @@
 "use client";
-import { useAuth } from "@/lib/useAuth";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 

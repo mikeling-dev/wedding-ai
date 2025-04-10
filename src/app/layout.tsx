@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Dancing_Script } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/ReduxProvider";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${dancingScript.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

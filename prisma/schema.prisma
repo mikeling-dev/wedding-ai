@@ -24,9 +24,7 @@ model User {
   partnerId      String?      @unique // Foreign key to partner's id
   partner        User?        @relation("PartnerRelation", fields: [partnerId], references: [id])
   inversePartner User?        @relation("PartnerRelation")
-  // weddingId      String?
-  // wedding       Wedding?     @relation(fields: [weddingId], references: [id])
-  weddins        Wedding[]     
+  weddings        Wedding[]     
   sentInvitations Invitation[] @relation("SentInvitations")     // Invitations this user sent
   receivedInvitations Invitation[] @relation("ReceivedInvitations") // Invitations this user received
   createdAt      DateTime     @default(now())
@@ -40,14 +38,17 @@ enum Tier {
 }
 
 model Invitation {
-  id         String      @id @default(uuid())
-  senderId   String      // Foreign key to the sender
-  sender     User        @relation("SentInvitations", fields: [senderId], references: [id])
-  receiverId String      // Foreign key to the receiver
-  receiver   User        @relation("ReceivedInvitations", fields: [receiverId], references: [id])
-  status     InviteStatus @default(PENDING)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id           String        @id @default(uuid())
+  senderId     String        // Foreign key to the sender
+  sender       User          @relation("SentInvitations", fields: [senderId], references: [id])
+  receiverId   String?       // Optional foreign key to the receiver (if they exist)
+  receiver     User?         @relation("ReceivedInvitations", fields: [receiverId], references: [id])
+  receiverEmail String       // Store the receiver's email regardless of whether they exist
+  status       InviteStatus @default(PENDING)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([receiverEmail]) // Add index for faster queries by email
 }
 
 enum InviteStatus {
@@ -59,6 +60,8 @@ enum InviteStatus {
 model Wedding {
   id                String    @id @default(uuid())
   users             User[]    // Users linked to this wedding
+  partner1Name      String
+  partner2Name      String
   date              DateTime?
   location          String?
   theme             String?

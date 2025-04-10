@@ -1,14 +1,15 @@
 "use client";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { useAuth } from "@/lib/useAuth";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
-import { Bell } from "lucide-react";
+import PartnerProfile from "./PartnerProfile";
+import Notifications from "./navbar/Notification";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  console.log(user?.picture);
+
   return (
     <div>
       <nav className="shadow-sm">
@@ -18,7 +19,8 @@ export default function Navbar() {
           </Link>
           {user ? (
             <div className="flex flex-row gap-4 items-center">
-              <Bell height={20} width={20} />
+              <Notifications />
+              <PartnerProfile />
               <Sheet>
                 <SheetTrigger className="cursor-pointer">
                   <Avatar>

@@ -27,6 +27,8 @@ export async function GET(req: NextRequest) {
         email: user.email,
         name: user.name,
         picture: user.picture,
+        partnerId: user.partnerId,
+        subscription: user.subscription,
       },
     });
   } catch {
