@@ -24,8 +24,9 @@ model User {
   partnerId      String?      @unique // Foreign key to partner's id
   partner        User?        @relation("PartnerRelation", fields: [partnerId], references: [id])
   inversePartner User?        @relation("PartnerRelation")
-  weddingId      String?
-  wedding        Wedding?     @relation(fields: [weddingId], references: [id])
+  // weddingId      String?
+  // wedding       Wedding?     @relation(fields: [weddingId], references: [id])
+  weddins        Wedding[]     
   sentInvitations Invitation[] @relation("SentInvitations")     // Invitations this user sent
   receivedInvitations Invitation[] @relation("ReceivedInvitations") // Invitations this user received
   createdAt      DateTime     @default(now())
