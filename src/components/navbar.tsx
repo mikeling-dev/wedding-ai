@@ -8,7 +8,7 @@ import PartnerProfile from "./PartnerProfile";
 import Notifications from "./navbar/Notification";
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { partner, user, logout } = useAuth();
 
   return (
     <div>
@@ -21,6 +21,7 @@ export default function Navbar() {
             <div className="flex flex-row gap-4 items-center">
               <Notifications />
               <PartnerProfile />
+              {partner && <p className="dancing-text font-bold">&</p>}
               <Sheet>
                 <SheetTrigger className="cursor-pointer">
                   <Avatar>

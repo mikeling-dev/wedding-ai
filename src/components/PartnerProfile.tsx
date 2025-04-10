@@ -12,16 +12,26 @@ import { Input } from "./ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Spinner } from "./ui/spinner";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
+import { setLoading } from "@/store/slices/loadingSlice";
+import { clearPartner } from "@/store/slices/partnerSlice";
 
 const PartnerProfile = () => {
   const { partner } = useAuth();
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const isLoading = useSelector(
+    (state: RootState) => state.loading["invitation/handle"] || false
+  );
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [pendingUnlink, setPendingUnlink] = useState(false);
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    dispatch(setLoading({ key: "invitation/handle", isLoading: true }));
 
     try {
       const response = await fetch("/api/invitations", {
@@ -41,7 +51,7 @@ const PartnerProfile = () => {
       toast.success("Invitation sent!", {
         description: `An invitation has been sent to ${email}`,
       });
-      setOpen(false);
+      setInviteOpen(false);
       setEmail("");
     } catch (error) {
       toast.error("Error", {
@@ -49,13 +59,43 @@ const PartnerProfile = () => {
           error instanceof Error ? error.message : "Failed to send invitation",
       });
     } finally {
-      setIsLoading(false);
+      dispatch(setLoading({ key: "invitation/handle", isLoading: false }));
+    }
+  };
+
+  const handleUnlink = async () => {
+    dispatch(setLoading({ key: "partner/unlink", isLoading: true }));
+    try {
+      const response = await fetch("/api/partner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send invitation");
+      }
+
+      dispatch(clearPartner());
+      setProfileOpen(false);
+      setPendingUnlink(false);
+
+      toast.success("Unlink completed", {
+        description: "You have unlinked your partner.",
+      });
+    } catch (error) {
+      toast.error("Unlink failed", {
+        description:
+          error instanceof Error ? error.message : "Failed to unlink partner",
+      });
+    } finally {
+      dispatch(setLoading({ key: "partner/unlink", isLoading: false }));
     }
   };
 
   if (!partner) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
         <DialogTrigger asChild>
           <Button>Invite Partner</Button>
         </DialogTrigger>
@@ -75,7 +115,13 @@ const PartnerProfile = () => {
               disabled={isLoading}
             />
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Sending..." : "Invite"}
+              {isLoading ? (
+                <span className="flex flex-row gap-2 items-center">
+                  <Spinner /> Inviting
+                </span>
+              ) : (
+                "Invite"
+              )}
             </Button>
           </form>
         </DialogContent>
@@ -84,10 +130,50 @@ const PartnerProfile = () => {
   }
 
   return (
-    <Avatar>
-      <AvatarImage src={partner.picture || undefined} />
-      <AvatarFallback>{partner.name?.[0] || "?"}</AvatarFallback>
-    </Avatar>
+    <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
+      <DialogTrigger asChild>
+        <Avatar>
+          <AvatarImage src={partner.picture || undefined} />
+          <AvatarFallback>{partner.name?.[0] || "?"}</AvatarFallback>
+        </Avatar>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Partner Information</DialogTitle>
+        </DialogHeader>
+        <div>
+          <p>
+            Name: <span>{partner.name}</span>
+          </p>
+          <p>
+            Email: <span>{partner.email}</span>
+          </p>
+        </div>
+        {!pendingUnlink ? (
+          <Button variant="default" onClick={() => setPendingUnlink(true)}>
+            Unlink Partner
+          </Button>
+        ) : (
+          <div className="grid grid-cols-2 w-full gap-2">
+            <Button
+              variant="destructive"
+              onClick={handleUnlink}
+              disabled={isLoading}
+            >
+              {isLoading && <Spinner />}
+              Confirm Unlink
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setPendingUnlink(false)}
+              disabled={isLoading}
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
 

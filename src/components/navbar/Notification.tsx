@@ -7,8 +7,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { toast } from "sonner";
 import { Bell } from "lucide-react";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setPartner } from "@/store/slices/partnerSlice";
+import { setLoading } from "@/store/slices/loadingSlice";
+import { RootState } from "@/lib/store";
 
 interface Invitation {
   id: string;
@@ -24,9 +26,11 @@ interface Invitation {
 const Notifications = () => {
   const { user } = useAuth();
   const dispatch = useDispatch();
+  const isLoading = useSelector(
+    (state: RootState) => state.loading["invitation/handle"] || false
+  );
 
   const [invitations, setInvitations] = useState<Invitation[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const fetchInvitations = async () => {
     try {
@@ -52,7 +56,7 @@ const Notifications = () => {
     invitationId: string,
     action: "accept" | "reject"
   ) => {
-    setIsLoading(true);
+    dispatch(setLoading({ key: "invitation/handle", isLoading: true }));
     try {
       const response = await fetch(`/api/invitations/${action}`, {
         method: "POST",
@@ -69,7 +73,6 @@ const Notifications = () => {
       }
 
       if (action === "accept") {
-        // Fetch partner information after accepting
         const partnerResponse = await fetch("/api/partner", {
           credentials: "include",
         });
@@ -82,13 +85,9 @@ const Notifications = () => {
       toast.success(
         action === "accept"
           ? "You are now connected with your partner!"
-          : "The invitation has been rejected",
-        {
-          description: `Invitation ${action}ed successfully`,
-        }
+          : "The invitation has been rejected"
       );
 
-      // Remove the invitation from the list
       setInvitations(invitations.filter((inv) => inv.id !== invitationId));
     } catch (error) {
       toast.error("Error", {
@@ -98,7 +97,7 @@ const Notifications = () => {
             : `Failed to ${action} invitation`,
       });
     } finally {
-      setIsLoading(false);
+      dispatch(setLoading({ key: "invitation/handle", isLoading: false }));
     }
   };
 
