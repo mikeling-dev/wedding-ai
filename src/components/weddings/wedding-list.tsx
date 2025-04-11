@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Calendar, ClipboardList, Sparkles } from "lucide-react";
 import { useWeddings } from "@/lib/hooks/useWeddings";
+import { useRouter } from "next/navigation";
 
 export function WeddingList() {
   const { weddings, loading, error } = useWeddings();
+  const router = useRouter();
 
   if (loading) {
     return (
@@ -71,11 +73,18 @@ export function WeddingList() {
                   </div>
                 </div>
                 <div className="flex gap-2 w-full md:w-auto">
-                  <Button className="flex-1 md:flex-none" variant="outline">
+                  <Button
+                    className="flex-1 md:flex-none"
+                    variant="outline"
+                    onClick={() => router.push(`/wedding/${wedding.id}/tasks`)}
+                  >
                     <ClipboardList className="h-4 w-4 mr-2" />
                     Tasks
                   </Button>
-                  <Button className="flex-1 md:flex-none">
+                  <Button
+                    className="flex-1 md:flex-none"
+                    onClick={() => router.push(`/wedding/${wedding.id}/plan`)}
+                  >
                     <Sparkles className="h-4 w-4 mr-2" />
                     Plan
                   </Button>

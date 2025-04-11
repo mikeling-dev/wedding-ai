@@ -13,6 +13,8 @@ import {
   WandSparkles,
 } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Spinner } from "../ui/spinner";
 
 interface FormData {
@@ -50,6 +52,7 @@ export default function FormStep4({
   weddingId,
 }: FormStep4Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
   const country = Country.getCountryByCode(formData.country);
   // const state = State.getStateByCodeAndCountry(
   //   formData.state,
@@ -101,9 +104,15 @@ export default function FormStep4({
 
       // Call onSubmit to complete the form submission
       onSubmit();
+
+      // Show success message
+      toast.success("Wedding plan generated successfully!");
+
+      // Redirect to the plan page
+      router.push(`/wedding/${weddingData.id}/plan`);
     } catch (error) {
       console.error("Error submitting wedding details:", error);
-      // You might want to add error handling UI here
+      toast.error("Failed to generate wedding plan. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -232,7 +241,7 @@ export default function FormStep4({
         </Button>
         <Button onClick={handleSubmit} disabled={isSubmitting}>
           {isSubmitting ? (
-            <div className="flex flex-row justify-between gap-2">
+            <div className="flex flex-row justify-between gap-2 items-center">
               <Spinner />
               Generating...
             </div>
