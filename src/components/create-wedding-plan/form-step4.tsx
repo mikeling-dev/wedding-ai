@@ -4,7 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { Country, State } from "country-state-city";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  MapPin,
+  Users,
+  Wallet,
+  WandSparkles,
+} from "lucide-react";
 
 interface FormData {
   // Step 1
@@ -52,90 +59,93 @@ export default function FormStep4({
   });
 
   return (
-    <div className="w-full space-y-6 py-6">
-      <Card>
+    <div className="w-full space-y-6 py-6 ">
+      <div className="space-y-2">
+        <h2 className="text-3xl font-semibold tracking-tight text-primary">
+          Generate your wedding plan
+        </h2>
+        <p className="text-muted-foreground">
+          Please review your wedding details below. Our AI assistant will use
+          this information to generate a personalized wedding plan for you.
+        </p>
+      </div>
+
+      <Card className="">
         <CardHeader>
-          <CardTitle>Couple Details</CardTitle>
+          <CardTitle>Wedding Summary</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
             <div>
-              <p className="text-sm font-medium">Partner 1</p>
+              <p className="font-medium">The Couple</p>
               <p className="text-sm text-muted-foreground">
-                {formData.partner1Name}
+                {formData.partner1Name} & {formData.partner2Name}
               </p>
             </div>
+
             <div>
-              <p className="text-sm font-medium">Partner 2</p>
+              <p className="font-medium">Contact Information</p>
               <p className="text-sm text-muted-foreground">
-                {formData.partner2Name}
+                Email: {formData.email}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Phone Number:{" "}
+                {formData.phoneNumber ? formData.phoneNumber : "Not provided"}
               </p>
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+
             <div>
-              <p className="text-sm font-medium">Cultural Background</p>
+              <p className="font-medium">Cultural & Religious Background</p>
               <p className="text-sm text-muted-foreground">
-                {formData.culturalBackground}
+                {formData.culturalBackground} • {formData.religion}
               </p>
             </div>
+
             <div>
-              <p className="text-sm font-medium">Religion</p>
-              <p className="text-sm text-muted-foreground">
-                {formData.religion}
-              </p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm font-medium">Email</p>
-              <p className="text-sm text-muted-foreground">{formData.email}</p>
-            </div>
-            {formData.phoneNumber && (
-              <div>
-                <p className="text-sm font-medium">Phone Number</p>
-                <p className="text-sm text-muted-foreground">
-                  {formData.phoneNumber}
-                </p>
+              <p className="font-medium">Wedding Details</p>
+              <div className="grid grid-rows-4 md:grid-rows-1 md:grid-cols-4 text-sm gap-2 mt-4 text-muted-foreground">
+                <div className="flex flex-col gap-1 justify-center items-center">
+                  <Calendar className="lg:block h-8 w-8 lg:h-10 lg:w-10" />
+                  <p>Date: </p>
+                  <p className="font-semibold">
+                    {formData.weddingDate instanceof Date &&
+                    !isNaN(formData.weddingDate.getTime())
+                      ? format(formData.weddingDate, "PPP")
+                      : "Date not set"}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-1 justify-center items-center">
+                  <MapPin className="lg:block h-8 w-8 lg:h-10 lg:w-10" />
+                  <p>Location:</p>
+                  <p className="font-semibold">
+                    {formData.state}, {formData.country}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-1 justify-center items-center">
+                  <Wallet className="lg:block h-8 w-8 lg:h-10 lg:w-10" />
+                  <p>Budget: </p>
+                  <p className="font-semibold">
+                    {formatter.format(formData.budget)}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-1 justify-center items-center">
+                  <Users className="lg:block h-8 w-8 lg:h-10 lg:w-10" />
+                  <p>Expected Guests: </p>
+                  <p className="font-semibold">{formData.guestCount}</p>
+                </div>
               </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+            </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Wedding Details</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm font-medium">Wedding Date</p>
+              <p className="font-medium">Wedding Vision</p>
               <p className="text-sm text-muted-foreground">
-                {formData.weddingDate instanceof Date &&
-                !isNaN(formData.weddingDate.getTime())
-                  ? format(formData.weddingDate, "PPP")
-                  : "Date not set"}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm font-medium">Location</p>
-              <p className="text-sm text-muted-foreground">
-                {state?.name}, {country?.name}
-              </p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm font-medium">Budget</p>
-              <p className="text-sm text-muted-foreground">
-                {formatter.format(formData.budget)}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm font-medium">Guest Count</p>
-              <p className="text-sm text-muted-foreground">
-                {formData.guestCount}
+                Theme: {formData.theme}
+                {formData.specialRequests && (
+                  <>
+                    <br />
+                    Special Requests: {formData.specialRequests}
+                  </>
+                )}
               </p>
             </div>
           </div>
@@ -144,28 +154,22 @@ export default function FormStep4({
 
       <Card>
         <CardHeader>
-          <CardTitle>Preferences</CardTitle>
+          <CardTitle className="h-fit flex flex-row gap-2 justify-center">
+            <WandSparkles className="h-4 w-4" /> AI-Powered Planning
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Our AI will analyze your preferences to create a personalized
+            wedding plan including budget breakdown, timeline, and categorized
+            task list. This will serve as your foundation for wedding planning.
+          </p>
         </CardHeader>
-        <CardContent className="grid gap-4">
-          <div>
-            <p className="text-sm font-medium">Theme</p>
-            <p className="text-sm text-muted-foreground">{formData.theme}</p>
-          </div>
-          {formData.specialRequests && (
-            <div>
-              <p className="text-sm font-medium">Special Requests</p>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                {formData.specialRequests}
-              </p>
-            </div>
-          )}
-        </CardContent>
       </Card>
+
       <div className="flex justify-between mt-6">
         <Button type="button" variant="outline" onClick={onBack}>
           <ArrowLeft className="mr-2" /> Back
         </Button>
-        <Button onClick={onSubmit}>Submit Plan</Button>
+        <Button onClick={onSubmit}>Generate Plan</Button>
       </div>
     </div>
   );
