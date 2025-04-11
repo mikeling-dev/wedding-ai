@@ -106,6 +106,7 @@ model Task {
   description String?   @db.Text
   dueDate     DateTime?
   isCompleted Boolean   @default(false)
+  category    String    // Category name from the plan's categories
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }

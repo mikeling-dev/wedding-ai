@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 
     ${
       user.subscription === "PREMIUM"
-        ? `Create a comprehensive wedding plan that includes:
+        ? `Create a comprehensive wedding plan that includes&semi;
         1. A brief overview of the wedding style and vision, inspired by the couple's cultural background and religion, blending traditional elements with modern preferences if applicable.
         2. A timeline with key phases (e.g., Planning Phase, Booking Phase, Design Phase, Execution Phase) customized to accommodate cultural or religious requirements (e.g., auspicious dates, pre-wedding rituals).
         3. A detailed budget breakdown with percentages for different categories, including a category for cultural/religious expenses (e.g., ceremonial items, officiant fees). Assume a total budget of $30,000 unless otherwise specified.
@@ -176,12 +176,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Clean up the response by removing markdown code block formatting
+    const cleanedPlan = plan
+      .replace(/```json\n?/g, "") // Remove ```json
+      .replace(/```\n?/g, "") // Remove closing ```
+      .trim(); // Remove any extra whitespace
+
     // Parse the plan JSON string
     let parsedPlan;
     try {
-      parsedPlan = JSON.parse(plan);
+      parsedPlan = JSON.parse(cleanedPlan);
     } catch (error) {
       console.error("Error parsing OpenAI response:", error);
+      console.error("Cleaned plan:", cleanedPlan);
       return NextResponse.json(
         { error: "Failed to parse plan" },
         { status: 500 }

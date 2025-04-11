@@ -13,6 +13,7 @@ import {
   WandSparkles,
 } from "lucide-react";
 import { useState } from "react";
+import { Spinner } from "../ui/spinner";
 
 interface FormData {
   // Step 1
@@ -231,10 +232,10 @@ export default function FormStep4({
         </Button>
         <Button onClick={handleSubmit} disabled={isSubmitting}>
           {isSubmitting ? (
-            <>
-              <span className="animate-spin mr-2">⏳</span>
+            <div className="flex flex-row justify-between gap-2">
+              <Spinner />
               Generating...
-            </>
+            </div>
           ) : (
             "Generate Plan"
           )}
