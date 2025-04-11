@@ -24,7 +24,7 @@ model User {
   partnerId      String?      @unique // Foreign key to partner's id
   partner        User?        @relation("PartnerRelation", fields: [partnerId], references: [id])
   inversePartner User?        @relation("PartnerRelation")
-  weddings        Wedding[]     
+  weddings       WeddingUser[]  // Changed from Wedding[] to WeddingUser[]
   sentInvitations Invitation[] @relation("SentInvitations")     // Invitations this user sent
   receivedInvitations Invitation[] @relation("ReceivedInvitations") // Invitations this user received
   createdAt      DateTime     @default(now())
@@ -57,13 +57,22 @@ enum InviteStatus {
   DENIED
 }
 
+enum WeddingRole {
+  CREATOR
+  PARTNER
+  HELPER
+}
+
 model Wedding {
   id                String    @id @default(uuid())
-  users             User[]    // Users linked to this wedding
+  users            WeddingUser[]  // Changed from User[] to WeddingUser[]
+  email             String
+  phoneNumber       String?
   partner1Name      String
   partner2Name      String
   date              DateTime?
-  location          String?
+  country           String?
+  state             String?
   theme             String?
   culturalBackground String?
   religion          String?
@@ -134,6 +143,21 @@ model WeddingListing {
   listingId  String
   listing    Listing  @relation(fields: [listingId], references: [id])
   bookedAt   DateTime @default(now())
+}
+
+model WeddingUser {
+  id        String      @id @default(uuid())
+  userId    String      // Foreign key to User
+  user      User        @relation(fields: [userId], references: [id])
+  weddingId String      // Foreign key to Wedding
+  wedding   Wedding     @relation(fields: [weddingId], references: [id])
+  role      WeddingRole
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([userId, weddingId])  // Ensure a user can only have one role per wedding
+  @@index([userId])
+  @@index([weddingId])
 }
 
 enum Category {
