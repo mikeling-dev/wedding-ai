@@ -4,10 +4,8 @@ import { prisma } from "@/lib/prisma";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { action: string } }
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ action: string }> }) {
+  const params = await props.params;
   const token = req.cookies.get("token")?.value;
   if (!token) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

@@ -10,9 +10,9 @@ import * as React from "react";
 import { ClipboardList } from "lucide-react";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Component-specific interfaces
@@ -62,7 +62,8 @@ async function getPlan(weddingId: string) {
   return plan;
 }
 
-export default async function PlanPage({ params }: PageProps) {
+export default async function PlanPage(props: PageProps) {
+  const params = await props.params;
   // Ensure params.id is handled properly
   if (!params?.id) {
     notFound();

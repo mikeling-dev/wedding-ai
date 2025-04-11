@@ -8,9 +8,9 @@ import { ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 async function getTasks(weddingId: string) {
@@ -33,7 +33,8 @@ async function getTasks(weddingId: string) {
   return plan;
 }
 
-export default async function TasksPage({ params }: PageProps) {
+export default async function TasksPage(props: PageProps) {
+  const params = await props.params;
   const plan = await getTasks(params.id);
   const categories = plan.categories
     ? JSON.parse(plan.categories as string)
