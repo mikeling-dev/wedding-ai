@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
-import { Country, State } from "country-state-city";
+import { Country } from "country-state-city";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
@@ -46,10 +46,10 @@ export default function FormStep4({
   onBack,
 }: FormStep4Props) {
   const country = Country.getCountryByCode(formData.country);
-  const state = State.getStateByCodeAndCountry(
-    formData.state,
-    formData.country
-  );
+  // const state = State.getStateByCodeAndCountry(
+  //   formData.state,
+  //   formData.country
+  // );
 
   console.log("Wedding date value:", formData.weddingDate);
 
