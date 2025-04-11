@@ -60,7 +60,9 @@ export default function FormStep4({
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      const response = await fetch("/api/wedding", {
+
+      // First, save or update the wedding details
+      const weddingResponse = await fetch("/api/wedding", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,12 +73,32 @@ export default function FormStep4({
         }),
       });
 
-      if (!response.ok) {
+      if (!weddingResponse.ok) {
         throw new Error("Failed to submit wedding details");
       }
 
-      const data = await response.json();
-      console.log("Wedding created/updated:", data);
+      const weddingData = await weddingResponse.json();
+
+      // Then, generate the AI plan
+      const planResponse = await fetch("/api/wedding/plan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          weddingId: weddingData.id || weddingId,
+        }),
+      });
+
+      if (!planResponse.ok) {
+        throw new Error("Failed to generate wedding plan");
+      }
+
+      const planData = await planResponse.json();
+      console.log("Wedding plan generated:", planData);
+
+      // Call onSubmit to complete the form submission
       onSubmit();
     } catch (error) {
       console.error("Error submitting wedding details:", error);
