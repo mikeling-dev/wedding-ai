@@ -27,9 +27,16 @@ interface FormData {
   specialRequests?: string;
 }
 
-const FormCard = () => {
+interface FormCardProps {
+  weddingId?: string;
+  defaultValues?: Partial<FormData>;
+}
+
+const FormCard = ({ weddingId, defaultValues }: FormCardProps) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<Partial<FormData>>({});
+  const [formData, setFormData] = useState<Partial<FormData>>(
+    defaultValues || {}
+  );
 
   const formSteps = [
     { id: 1, form: FormStep1, description: "Couple Details" },
@@ -51,8 +58,9 @@ const FormCard = () => {
   };
 
   const handleFinalSubmit = () => {
-    console.log("Form submitted:", formData);
-    // Add your submission logic here
+    // This will be called after the API call is successful
+    // You might want to redirect the user or show a success message
+    console.log("Form submitted successfully");
   };
 
   return (
@@ -163,6 +171,7 @@ const FormCard = () => {
           formData={formData as FormData}
           onSubmit={handleFinalSubmit}
           onBack={handleBack}
+          weddingId={weddingId}
         />
       )}
     </Card>

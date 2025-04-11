@@ -12,6 +12,7 @@ import {
   Wallet,
   WandSparkles,
 } from "lucide-react";
+import { useState } from "react";
 
 interface FormData {
   // Step 1
@@ -38,13 +39,16 @@ interface FormStep4Props {
   formData: FormData;
   onSubmit: () => void;
   onBack: () => void;
+  weddingId?: string;
 }
 
 export default function FormStep4({
   formData,
   onSubmit,
   onBack,
+  weddingId,
 }: FormStep4Props) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const country = Country.getCountryByCode(formData.country);
   // const state = State.getStateByCodeAndCountry(
   //   formData.state,
@@ -52,6 +56,35 @@ export default function FormStep4({
   // );
 
   console.log("Wedding date value:", formData.weddingDate);
+
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+      const response = await fetch("/api/wedding", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          weddingId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit wedding details");
+      }
+
+      const data = await response.json();
+      console.log("Wedding created/updated:", data);
+      onSubmit();
+    } catch (error) {
+      console.error("Error submitting wedding details:", error);
+      // You might want to add error handling UI here
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const formatter = new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -166,10 +199,24 @@ export default function FormStep4({
       </Card>
 
       <div className="flex justify-between mt-6">
-        <Button type="button" variant="outline" onClick={onBack}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onBack}
+          disabled={isSubmitting}
+        >
           <ArrowLeft className="mr-2" /> Back
         </Button>
-        <Button onClick={onSubmit}>Generate Plan</Button>
+        <Button onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <span className="animate-spin mr-2">⏳</span>
+              Generating...
+            </>
+          ) : (
+            "Generate Plan"
+          )}
+        </Button>
       </div>
     </div>
   );
