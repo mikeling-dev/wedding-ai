@@ -7,9 +7,11 @@ import { format } from "date-fns";
 import { Calendar, ClipboardList, FerrisWheel, Sparkles } from "lucide-react";
 import { useWeddings } from "@/lib/hooks/useWeddings";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export function WeddingList() {
   const { weddings, loading, error } = useWeddings();
+  const { user } = useAuth();
   const router = useRouter();
 
   if (loading) {
@@ -24,6 +26,8 @@ export function WeddingList() {
       </div>
     );
   }
+
+  if (!user) return;
 
   if (error) {
     return (
