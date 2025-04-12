@@ -12,8 +12,16 @@ export function useWeddings() {
   const { weddings, loading, error } = useSelector(
     (state: RootState) => state.wedding
   );
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
 
   const fetchWeddings = async () => {
+    if (!isAuthenticated) {
+      dispatch(setWeddings([]));
+      return;
+    }
+
     dispatch(setWeddingLoading(true));
     try {
       const response = await fetch("/api/wedding");
@@ -34,7 +42,7 @@ export function useWeddings() {
 
   useEffect(() => {
     fetchWeddings();
-  }, [dispatch]);
+  }, [isAuthenticated, dispatch]);
 
   return { weddings, loading, error, refetch: fetchWeddings };
 }

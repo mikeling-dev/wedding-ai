@@ -67,10 +67,10 @@ export async function POST(req: NextRequest) {
       user.subscription === "PREMIUM"
         ? `Create a comprehensive wedding plan that includes&semi;
         1. A brief overview of the wedding style and vision, inspired by the couple's cultural background and religion, blending traditional elements with modern preferences if applicable.
-        2. A timeline with key phases (e.g., Planning Phase, Booking Phase, Design Phase, Execution Phase) customized to accommodate cultural or religious requirements (e.g., auspicious dates, pre-wedding rituals).
+        2. A timeline with key phases (e.g., Planning Phase, Booking Phase, Design Phase, Execution Phase) customized to accommodate cultural or religious requirements (e.g., auspicious dates, pre-wedding rituals). Use relative time ranges like '6 Months Before', '1 Month Before' for the timeline phases.
         3. A detailed budget breakdown with percentages for different categories, including a category for cultural/religious expenses (e.g., ceremonial items, officiant fees). Assume a total budget of $30,000 unless otherwise specified.
         4. A list of key categories (e.g., Venue, Catering, Photography, Cultural/Religious Practices) with brief descriptions that reflect the couple's traditions and needs.
-        5. A to-do list organized by categories, with 5-7 tasks per category. For the Cultural/Religious Practices category, include specific tasks the couple must complete to honor their religion and cultural background (e.g., arranging a specific ceremony, consulting a religious leader, or preparing traditional items).
+        5. A to-do list organized by categories, with 5-7 tasks per category. For the Cultural/Religious Practices category, include specific tasks the couple must complete to honor their religion and cultural background (e.g., arranging a specific ceremony, consulting a religious leader, or preparing traditional items). For each task, calculate a specific due date based on the wedding date (${weddingDetails.weddingDate}).
       
       Return the response as a JSON object with the following structure:
     {
@@ -101,17 +101,17 @@ export async function POST(req: NextRequest) {
             "title": "task title",
             "description": "task description, specific to cultural/religious needs where applicable",
             "category": "corresponding category name from categories",
-            "dueDate": "suggested timeline relative to wedding date (e.g., '6 Months Before', '1 Month Before')",
+            "dueDate": "specific date in YYYY-MM-DD format",
             "status": "pending"
             }
         ]
     }`
         : `Create a comprehensive wedding plan that includes:
       1. A brief overview of the wedding style and vision
-      2. A timeline with key phases (Planning Phase, Booking Phase, Design Phase, etc.)
+      2. A timeline with key phases (Planning Phase, Booking Phase, Design Phase, etc.) using relative time ranges like '6 Months Before', '1 Month Before'
       3. A detailed budget breakdown with percentages for different categories
       4. A list of key categories (Venue, Catering, Photography, etc.) with brief descriptions
-      5. A todo list organized by categories with at least 5-7 tasks per category
+      5. A todo list organized by categories with at least 5-7 tasks per category. For each task, calculate a specific due date based on the wedding date (${weddingDetails.weddingDate}).
       
       Return the response as a JSON object with the following structure:
       {
@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
             "title": "task title",
             "description": "task description",
             "category": "corresponding category name from categories",
-            "dueDate": "suggested timeline relative to wedding date",
+            "dueDate": "specific date in YYYY-MM-DD format",
             "status": "pending"
           }
         ]
@@ -213,7 +213,7 @@ export async function POST(req: NextRequest) {
           planId: savedPlan.id,
           title: task.title,
           description: task.description,
-          dueDate: null, // We'll need to convert the relative date to actual date later
+          dueDate: new Date(task.dueDate),
           isCompleted: false,
           category: task.category,
         })),

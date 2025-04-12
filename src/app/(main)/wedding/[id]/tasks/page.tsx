@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { TaskItem } from "./task-item";
+import { TaskItem } from "@/components/todo-list/TaskItem";
 
 interface PageProps {
   params: Promise<{
