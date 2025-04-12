@@ -1,30 +1,40 @@
-import { useState, useEffect } from "react";
-import { Wedding } from "@/types/wedding";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import {
+  setWeddings,
+  setWeddingLoading,
+  setWeddingError,
+} from "@/store/slices/weddingSlice";
 
 export function useWeddings() {
-  const [weddings, setWeddings] = useState<Wedding[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch();
+  const { weddings, loading, error } = useSelector(
+    (state: RootState) => state.wedding
+  );
+
+  const fetchWeddings = async () => {
+    dispatch(setWeddingLoading(true));
+    try {
+      const response = await fetch("/api/wedding");
+      if (!response.ok) {
+        throw new Error("Failed to fetch weddings");
+      }
+      const data = await response.json();
+      dispatch(setWeddings(data));
+    } catch (error) {
+      console.error("Error fetching weddings:", error);
+      dispatch(
+        setWeddingError(
+          error instanceof Error ? error.message : "Failed to load weddings"
+        )
+      );
+    }
+  };
 
   useEffect(() => {
-    const fetchWeddings = async () => {
-      try {
-        const response = await fetch("/api/wedding");
-        if (!response.ok) {
-          throw new Error("Failed to fetch weddings");
-        }
-        const data = await response.json();
-        setWeddings(data);
-      } catch (error) {
-        console.error("Error fetching weddings:", error);
-        setError("Failed to load weddings");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchWeddings();
-  }, []);
+  }, [dispatch]);
 
-  return { weddings, loading, error };
+  return { weddings, loading, error, refetch: fetchWeddings };
 }

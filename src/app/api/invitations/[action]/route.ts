@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
+import { WeddingRole } from "@prisma/client";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-export async function POST(req: NextRequest, props: { params: Promise<{ action: string }> }) {
+export async function POST(
+  req: NextRequest,
+  props: { params: Promise<{ action: string }> }
+) {
   const params = await props.params;
   const token = req.cookies.get("token")?.value;
   if (!token) {
@@ -31,6 +35,9 @@ export async function POST(req: NextRequest, props: { params: Promise<{ action: 
         OR: [{ receiverId: decoded.userId }, { receiverEmail: decoded.email }],
         status: "PENDING",
       },
+      include: {
+        sender: true,
+      },
     });
 
     if (!invitation) {
@@ -49,17 +56,62 @@ export async function POST(req: NextRequest, props: { params: Promise<{ action: 
         });
       }
 
-      // Update both users to be partners
-      await prisma.$transaction([
-        prisma.user.update({
+      // Start a transaction to handle all the updates
+      await prisma.$transaction(async (tx) => {
+        // Update both users to be partners
+        await tx.user.update({
           where: { id: decoded.userId },
           data: { partnerId: invitation.senderId },
-        }),
-        prisma.user.update({
+        });
+        await tx.user.update({
           where: { id: invitation.senderId },
           data: { partnerId: decoded.userId },
-        }),
-      ]);
+        });
+
+        // Find all weddings where either user is a creator
+        const allWeddings = await tx.weddingUser.findMany({
+          where: {
+            OR: [
+              // Check sender's weddings
+              {
+                userId: invitation.senderId,
+                role: WeddingRole.CREATOR,
+              },
+              // Check receiver's weddings
+              {
+                userId: decoded.userId,
+                role: WeddingRole.CREATOR,
+              },
+            ],
+          },
+          include: {
+            wedding: true,
+          },
+        });
+
+        // Add each user as partner to the other's weddings
+        for (const weddingUser of allWeddings) {
+          if (weddingUser.userId === invitation.senderId) {
+            // This is sender's wedding, add receiver as partner
+            await tx.weddingUser.create({
+              data: {
+                userId: decoded.userId,
+                weddingId: weddingUser.wedding.id,
+                role: WeddingRole.PARTNER,
+              },
+            });
+          } else {
+            // This is receiver's wedding, add sender as partner
+            await tx.weddingUser.create({
+              data: {
+                userId: invitation.senderId,
+                weddingId: weddingUser.wedding.id,
+                role: WeddingRole.PARTNER,
+              },
+            });
+          }
+        }
+      });
     }
 
     // Update invitation status

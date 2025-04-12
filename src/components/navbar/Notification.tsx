@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPartner } from "@/store/slices/partnerSlice";
 import { setLoading } from "@/store/slices/loadingSlice";
 import { RootState } from "@/lib/store";
+import { useWeddings } from "@/lib/hooks/useWeddings";
 
 interface Invitation {
   id: string;
@@ -29,6 +30,7 @@ const Notifications = () => {
   const isLoading = useSelector(
     (state: RootState) => state.loading["invitation/handle"] || false
   );
+  const { refetch: refetchWeddings } = useWeddings();
 
   const [invitations, setInvitations] = useState<Invitation[]>([]);
 
@@ -80,6 +82,8 @@ const Notifications = () => {
           const partnerData = await partnerResponse.json();
           dispatch(setPartner(partnerData));
         }
+
+        await refetchWeddings();
       }
 
       toast.success(

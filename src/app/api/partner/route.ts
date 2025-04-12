@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
+import { WeddingRole } from "@prisma/client";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -94,17 +95,54 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Update both users to remove the partner relationship
-    await prisma.$transaction([
-      prisma.user.update({
+    // Start a transaction to handle all updates
+    await prisma.$transaction(async (tx) => {
+      // Update both users to remove the partner relationship
+      await tx.user.update({
         where: { id: decoded.userId },
         data: { partnerId: null },
-      }),
-      prisma.user.update({
+      });
+      await tx.user.update({
         where: { id: partner.id },
         data: { partnerId: null },
-      }),
-    ]);
+      });
+
+      // Find all weddings where either user is a creator
+      const userWeddings = await tx.weddingUser.findMany({
+        where: {
+          OR: [
+            { userId: decoded.userId, role: WeddingRole.CREATOR },
+            { userId: partner.id, role: WeddingRole.CREATOR },
+          ],
+        },
+        include: {
+          wedding: true,
+        },
+      });
+
+      // For each wedding, remove the partner role of the non-creator
+      for (const weddingUser of userWeddings) {
+        if (weddingUser.userId === decoded.userId) {
+          // Current user is creator, remove partner's role
+          await tx.weddingUser.deleteMany({
+            where: {
+              weddingId: weddingUser.wedding.id,
+              userId: partner.id,
+              role: WeddingRole.PARTNER,
+            },
+          });
+        } else {
+          // Partner is creator, remove current user's role
+          await tx.weddingUser.deleteMany({
+            where: {
+              weddingId: weddingUser.wedding.id,
+              userId: decoded.userId,
+              role: WeddingRole.PARTNER,
+            },
+          });
+        }
+      }
+    });
 
     return NextResponse.json(
       { message: "Successfully unlinked partner" },

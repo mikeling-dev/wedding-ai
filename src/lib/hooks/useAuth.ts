@@ -3,6 +3,7 @@ import { RootState } from "../store";
 import { setToken, clearAuth } from "../../store/slices/authSlice";
 import { setUser, clearUser } from "../../store/slices/userSlice";
 import { setPartner, clearPartner } from "../../store/slices/partnerSlice";
+import { clearWeddings } from "../../store/slices/weddingSlice";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -62,6 +63,7 @@ export function useAuth() {
     dispatch(clearAuth());
     dispatch(clearUser());
     dispatch(clearPartner());
+    dispatch(clearWeddings());
   };
 
   const login = () => {
