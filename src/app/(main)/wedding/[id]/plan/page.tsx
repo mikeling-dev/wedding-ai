@@ -98,7 +98,7 @@ export default async function PlanPage(props: PageProps) {
   }));
 
   return (
-    <div className="py-8 space-y-8 w-full px-12">
+    <div className="py-8 space-y-8 w-full px-6 md:px-12">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Wedding Plan</h1>
         <Link href={`/wedding/${plan.weddingId}/tasks`}>

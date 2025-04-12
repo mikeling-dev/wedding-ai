@@ -4,7 +4,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { Calendar, ClipboardList, Sparkles } from "lucide-react";
+import { Calendar, ClipboardList, FerrisWheel, Sparkles } from "lucide-react";
 import { useWeddings } from "@/lib/hooks/useWeddings";
 import { useRouter } from "next/navigation";
 
@@ -14,7 +14,7 @@ export function WeddingList() {
 
   if (loading) {
     return (
-      <div className="w-full py-8 px-12">
+      <div className="w-full py-8 px-6 md:px-12">
         <h2 className="text-2xl font-semibold mb-4">Your Weddings</h2>
         <div className="space-y-4">
           <Card className="w-full animate-pulse">
@@ -27,7 +27,7 @@ export function WeddingList() {
 
   if (error) {
     return (
-      <div className="w-full py-8">
+      <div className="w-full py-8 px-6 md:px-12">
         <h2 className="text-2xl font-semibold mb-4">Your Weddings</h2>
         <div className="text-red-500">{error}</div>
       </div>
@@ -36,7 +36,7 @@ export function WeddingList() {
 
   if (weddings.length === 0) {
     return (
-      <div className="w-full py-8 px-12">
+      <div className="w-full py-8 px-6 md:px-12">
         <h2 className="text-2xl font-semibold mb-4">Your Weddings</h2>
         <Card>
           <CardContent className="py-4">
@@ -50,7 +50,7 @@ export function WeddingList() {
   }
 
   return (
-    <div className="w-full py-8 px-12">
+    <div className="w-full py-8 px-6 md:px-12">
       <h2 className="text-2xl font-semibold mb-4">Your Weddings</h2>
       <div className="space-y-4">
         {weddings.map((wedding) => (
@@ -67,7 +67,7 @@ export function WeddingList() {
                       {format(new Date(wedding.date), "PPP")}
                     </div>
                     <div className="flex items-center gap-1">
-                      <Sparkles className="h-4 w-4" />
+                      <FerrisWheel className="h-4 w-4" />
                       {wedding.theme}
                     </div>
                   </div>
