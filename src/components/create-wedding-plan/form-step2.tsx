@@ -54,8 +54,8 @@ const formSchema = z.object({
   weddingDate: z.date({
     required_error: "Wedding date is required",
   }),
-  country: z.string().min(1, "Country is required"),
-  state: z.string().min(1, "State is required"),
+  country: z.string().optional(),
+  state: z.string().optional(),
   budget: z.number().min(1, "Budget must be greater than 0"),
   guestCount: z.number().min(1, "Guest count must be at least 1"),
 });
@@ -99,7 +99,9 @@ export default function FormStep2({
         selectedCountry
       ) as IState[];
       setStates(countryStates);
-      form.setValue("state", "");
+      if (form.getValues("state")) {
+        form.setValue("state", "");
+      }
     }
   }, [selectedCountry, form]);
 
@@ -108,8 +110,9 @@ export default function FormStep2({
     onNext();
   });
 
-  const getCurrencySymbol = (countryCode: string) => {
+  const getCurrencySymbol = (countryCode: string | undefined) => {
     try {
+      if (!countryCode) return "USD";
       const country = countries.find(
         (c: ICountry) => c.isoCode === countryCode
       );
@@ -170,7 +173,7 @@ export default function FormStep2({
             name="country"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Country</FormLabel>
+                <FormLabel>Country (Optional)</FormLabel>
                 <Popover open={openCountry} onOpenChange={setOpenCountry}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -180,7 +183,7 @@ export default function FormStep2({
                         aria-expanded={openCountry}
                         className="w-full justify-between"
                       >
-                        {field.value
+                        {field.value && field.value.length > 0
                           ? countries.find(
                               (country) => country.isoCode === field.value
                             )?.name
@@ -231,7 +234,7 @@ export default function FormStep2({
             name="state"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>State</FormLabel>
+                <FormLabel>State (Optional)</FormLabel>
                 <Popover open={openState} onOpenChange={setOpenState}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -242,7 +245,9 @@ export default function FormStep2({
                         className="w-full justify-between"
                         disabled={!selectedCountry}
                       >
-                        {field.value ? field.value : "Select state..."}
+                        {field.value && field.value.length > 0
+                          ? field.value
+                          : "Select state..."}
                         <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </FormControl>

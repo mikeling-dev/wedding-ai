@@ -43,6 +43,7 @@ const formSchema = z.object({
     "Korean",
     "Malay",
     "Others",
+    "",
   ]),
   religion: z.enum([
     "Christians",
@@ -51,6 +52,7 @@ const formSchema = z.object({
     "Hindus",
     "Others",
     "Religionless",
+    "",
   ]),
   email: z.string().email("Invalid email address"),
   phoneNumber: z.string().optional(),
@@ -75,8 +77,8 @@ export default function FormStep1({
     defaultValues: {
       partner1Name: defaultValues?.partner1Name || "",
       partner2Name: defaultValues?.partner2Name || "",
-      culturalBackground: defaultValues?.culturalBackground || "Western",
-      religion: defaultValues?.religion || "Christians",
+      culturalBackground: defaultValues?.culturalBackground || "",
+      religion: defaultValues?.religion || "",
       email: defaultValues?.email || user?.email || "",
       phoneNumber: defaultValues?.phoneNumber || "",
     },
