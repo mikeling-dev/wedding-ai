@@ -26,7 +26,7 @@ const PartnerProfile = () => {
   const isLoading = useSelector(
     (state: RootState) => state.loading["invitation/handle"] || false
   );
-  const { refetch: refetchWeddings } = useWeddings();
+  const { mutate: refetchWeddings } = useWeddings();
   const [inviteOpen, setInviteOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [pendingUnlink, setPendingUnlink] = useState(false);

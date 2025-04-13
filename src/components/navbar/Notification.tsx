@@ -30,7 +30,7 @@ const Notifications = () => {
   const isLoading = useSelector(
     (state: RootState) => state.loading["invitation/handle"] || false
   );
-  const { refetch: refetchWeddings } = useWeddings();
+  const { mutate: refetchWeddings } = useWeddings();
 
   const [invitations, setInvitations] = useState<Invitation[]>([]);
 
