@@ -46,7 +46,7 @@ export default function HowTo() {
   ];
 
   return (
-    <section className="py-16 px-4 bg-background">
+    <section className="py-16 px-6 md:px-12 bg-background">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">How WeddingAI Works</h2>
