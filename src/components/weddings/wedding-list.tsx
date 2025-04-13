@@ -22,11 +22,39 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function WeddingList() {
-  const { weddings, loading, error } = useWeddings();
+  const { weddings, loading, error, mutate } = useWeddings();
   const { user } = useAuth();
   const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedWeddingId, setSelectedWeddingId] = useState<string | null>(
+    null
+  );
+
+  const handleDeleteWedding = async (weddingId: string) => {
+    try {
+      setIsDeleting(true);
+      const response = await fetch(`/api/wedding/${weddingId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete wedding");
+      }
+
+      toast.success("Wedding deleted successfully");
+      mutate();
+    } catch (error) {
+      console.error("Error deleting wedding:", error);
+      toast.error("Failed to delete wedding");
+    } finally {
+      setIsDeleting(false);
+      setSelectedWeddingId(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -91,9 +119,15 @@ export function WeddingList() {
                       </div>
                     </div>
                   </div>
-                  <Dialog>
+                  <Dialog
+                    open={selectedWeddingId === wedding.id}
+                    onOpenChange={(open) => !open && setSelectedWeddingId(null)}
+                  >
                     <DialogTrigger asChild>
-                      <Button variant="outline">
+                      <Button
+                        variant="outline"
+                        onClick={() => setSelectedWeddingId(wedding.id)}
+                      >
                         <Trash />
                       </Button>
                     </DialogTrigger>
@@ -105,8 +139,21 @@ export function WeddingList() {
                           permanently deleted.
                         </DialogDescription>
                         <div className="flex flex-row gap-2 mt-2">
-                          <Button variant="destructive">Delete wedding</Button>
-                          <Button variant="outline">Cancel</Button>
+                          <Button
+                            variant="destructive"
+                            onClick={() =>
+                              wedding.id && handleDeleteWedding(wedding.id)
+                            }
+                            disabled={isDeleting}
+                          >
+                            {isDeleting ? "Deleting..." : "Delete wedding"}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => setSelectedWeddingId(null)}
+                          >
+                            Cancel
+                          </Button>
                         </div>
                       </DialogHeader>
                     </DialogContent>

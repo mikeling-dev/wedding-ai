@@ -30,6 +30,7 @@ export function useWeddings() {
       }
       const data = await response.json();
       dispatch(setWeddings(data));
+      dispatch(setWeddingLoading(false));
     } catch (error) {
       console.error("Error fetching weddings:", error);
       dispatch(
@@ -37,6 +38,7 @@ export function useWeddings() {
           error instanceof Error ? error.message : "Failed to load weddings"
         )
       );
+      dispatch(setWeddingLoading(false));
     }
   };
 
@@ -44,5 +46,5 @@ export function useWeddings() {
     fetchWeddings();
   }, [isAuthenticated, dispatch]);
 
-  return { weddings, loading, error, refetch: fetchWeddings };
+  return { weddings, loading, error, mutate: fetchWeddings };
 }
