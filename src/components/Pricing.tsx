@@ -102,7 +102,7 @@ export default function Pricing() {
   const basicFeatures = [
     { text: "Generate or regenerate up to 3 times", included: true },
     { text: "Generate plan with basic input preferences", included: true },
-    { text: "Uses GPT-4-mini model for simpler planning", included: true },
+    { text: "Uses GPT-4o-mini model for simpler planning", included: true },
     { text: "Maximum 15 tasks in todo list", included: true },
     { text: "Access to marketplace (coming soon)", included: true },
     { text: "Religion & cultural background preferences", included: false },
@@ -114,7 +114,7 @@ export default function Pricing() {
   const premiumFeatures = [
     { text: "Generate or regenerate up to 10 times", included: true },
     { text: "Generate plan with basic input preferences", included: true },
-    { text: "Uses GPT-4 for more intelligent planning", included: true },
+    { text: "Uses GPT-4o for more intelligent planning", included: true },
     { text: "Maximum 30 tasks in todo list", included: true },
     { text: "Access to marketplace (coming soon)", included: true },
     { text: "Religion & cultural background preferences", included: true },
