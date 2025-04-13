@@ -135,7 +135,7 @@ const PartnerProfile = () => {
   return (
     <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
       <DialogTrigger asChild>
-        <Avatar>
+        <Avatar className="cursor-pointer">
           <AvatarImage src={partner.picture || undefined} />
           <AvatarFallback>{partner.name?.[0] || "?"}</AvatarFallback>
         </Avatar>

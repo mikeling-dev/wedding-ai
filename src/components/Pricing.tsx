@@ -128,38 +128,28 @@ export default function Pricing() {
   ];
 
   return (
-    <section className="py-8 px-6 md:px-12 bg-background">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold mb-4">Pricing</h2>
-          <p className="text-xl text-gray-600">
-            Manage your wedding like a pro with Premium
-          </p>
-        </div>
-        <div className="grid grid-flow-col gap-4 overflow-x-auto pb-6 snap-x snap-mandatory">
-          <div className="snap-center h-full ">
-            <PricingTier
-              name="Basic"
-              price="Free"
-              description="Perfect for getting started with AI wedding planning"
-              features={basicFeatures}
-              buttonText="Get Started"
-              onSubscribe={handleSubscribe}
-            />
-          </div>
-          <div className="snap-center shrink-0">
-            <PricingTier
-              name="Premium"
-              price="$4"
-              description="For couples who want the full planning experience"
-              features={premiumFeatures}
-              buttonText="Subscribe"
-              onSubscribe={handleSubscribe}
-              popular={true}
-            />
-          </div>
-        </div>
+    <div className="grid grid-flow-col gap-4 overflow-x-auto pb-6 snap-x snap-mandatory">
+      <div className="snap-center h-full ">
+        <PricingTier
+          name="Basic"
+          price="Free"
+          description="Perfect for getting started with AI wedding planning"
+          features={basicFeatures}
+          buttonText="Get Started"
+          onSubscribe={handleSubscribe}
+        />
       </div>
-    </section>
+      <div className="snap-center shrink-0">
+        <PricingTier
+          name="Premium"
+          price="$4"
+          description="For couples who want the full planning experience"
+          features={premiumFeatures}
+          buttonText="Subscribe"
+          onSubscribe={handleSubscribe}
+          popular={true}
+        />
+      </div>
+    </div>
   );
 }
