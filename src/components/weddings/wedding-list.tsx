@@ -59,7 +59,7 @@ export function WeddingList() {
   if (loading) {
     return (
       <div className="w-full py-8 px-6 md:px-12">
-        <h2 className="text-2xl font-semibold mb-4">Your Weddings</h2>
+        <h2 className="text-2xl font-semibold mb-4">Your Wedding Plans</h2>
         <div className="space-y-4">
           <Card className="w-full animate-pulse">
             <CardContent className="h-32" />
@@ -74,7 +74,7 @@ export function WeddingList() {
   if (error) {
     return (
       <div className="w-full py-8 px-6 md:px-12">
-        <h2 className="text-2xl font-semibold mb-4">Your Weddings</h2>
+        <h2 className="text-2xl font-semibold mb-4">Your Wedding Plans</h2>
         <div className="text-red-500">{error}</div>
       </div>
     );
@@ -83,7 +83,7 @@ export function WeddingList() {
   if (weddings.length === 0) {
     return (
       <div className="w-full py-8 px-6 md:px-12">
-        <h2 className="text-2xl font-semibold mb-4">Your Weddings</h2>
+        <h2 className="text-2xl font-semibold mb-4">Your Wedding Plans</h2>
         <Card>
           <CardContent className="py-4">
             <p className="text-muted-foreground text-center">
@@ -97,7 +97,7 @@ export function WeddingList() {
 
   return (
     <div className="w-full py-8 px-6 md:px-12">
-      <h2 className="text-2xl font-semibold mb-4">Your Weddings</h2>
+      <h2 className="text-2xl font-semibold mb-4">{`Your Wedding Plans (${weddings.length})`}</h2>
       <div className="gap-4 grid md:grid-cols-2 lg:grid-cols-3">
         {weddings.map((wedding) => (
           <Card key={wedding.id} className="w-full">
@@ -138,8 +138,9 @@ export function WeddingList() {
                           All information related to this wedding will be
                           permanently deleted.
                         </DialogDescription>
-                        <div className="flex flex-row gap-2 mt-2">
+                        <div className="flex flex-row gap-2 mt-2 w-full">
                           <Button
+                            className="flex-1"
                             variant="destructive"
                             onClick={() =>
                               wedding.id && handleDeleteWedding(wedding.id)
@@ -149,6 +150,7 @@ export function WeddingList() {
                             {isDeleting ? "Deleting..." : "Delete wedding"}
                           </Button>
                           <Button
+                            className="flex-1"
                             variant="outline"
                             onClick={() => setSelectedWeddingId(null)}
                           >
