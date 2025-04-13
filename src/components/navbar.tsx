@@ -19,30 +19,37 @@ import Pricing from "./Pricing";
 import { memo } from "react";
 import { User } from "@/types/user";
 import { Partner } from "@/types/partner";
+import React from "react";
 
 const MenuContent = memo(
   ({
     user,
     partner,
     logout,
+    setOpen,
   }: {
     user: User;
     partner: Partner | null;
     logout: () => void;
+    setOpen: (open: boolean) => void;
   }) => (
     <div className="flex flex-col gap-4 mt-6">
-      <Link href="/" className="w-full">
+      <Link href="/" className="w-full" onClick={() => setOpen(false)}>
         <Button variant="ghost" className="w-full justify-start">
           Home
         </Button>
       </Link>
-      <Link href="/create-wedding-plan" className="w-full">
+      <Link
+        href="/create-wedding-plan"
+        className="w-full"
+        onClick={() => setOpen(false)}
+      >
         <Button variant="ghost" className="w-full justify-start">
           Create Wedding Plan
         </Button>
       </Link>
 
-      <Link href="/" className="w-full">
+      <Link href="/" className="w-full" onClick={() => setOpen(false)}>
         <Button variant="ghost" className="w-full justify-start">
           My Wedding Plans
         </Button>
@@ -93,6 +100,8 @@ MenuContent.displayName = "MenuContent";
 
 export default function Navbar() {
   const { partner, user, logout } = useAuth();
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [desktopOpen, setDesktopOpen] = React.useState(false);
 
   return (
     <div>
@@ -107,7 +116,7 @@ export default function Navbar() {
 
               {/* Mobile view */}
               <div className="md:hidden">
-                <Sheet>
+                <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                   <SheetTrigger className="cursor-pointer">
                     <Button variant="ghost" className="relative" size="icon">
                       <Menu className="h-5 w-5" />
@@ -126,6 +135,7 @@ export default function Navbar() {
                       user={user}
                       partner={partner}
                       logout={logout}
+                      setOpen={setMobileOpen}
                     />
                   </SheetContent>
                 </Sheet>
@@ -139,7 +149,7 @@ export default function Navbar() {
                   {user.picture && <AvatarImage src={user.picture} />}
                   <AvatarFallback>{user.name[0]}</AvatarFallback>
                 </Avatar>
-                <Sheet>
+                <Sheet open={desktopOpen} onOpenChange={setDesktopOpen}>
                   <SheetTrigger className="cursor-pointer">
                     <Menu />
                   </SheetTrigger>
@@ -156,6 +166,7 @@ export default function Navbar() {
                       user={user}
                       partner={partner}
                       logout={logout}
+                      setOpen={setDesktopOpen}
                     />
                   </SheetContent>
                 </Sheet>
