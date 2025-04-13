@@ -7,7 +7,7 @@ import { PlanCategories } from "@/components/plan/plan-categories";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import * as React from "react";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, Pencil } from "lucide-react";
 
 interface PageProps {
   params: Promise<{
@@ -99,14 +99,22 @@ export default async function PlanPage(props: PageProps) {
 
   return (
     <div className="py-8 space-y-8 w-full px-6 md:px-12">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col lg:flex-row justify-between gap-2 items-center">
         <h1 className="text-3xl font-bold">Wedding Plan</h1>
-        <Link href={`/wedding/${plan.weddingId}/tasks`}>
-          <Button>
-            <ClipboardList className="w-4 h-4 mr-2" />
-            View Tasks
-          </Button>
-        </Link>
+        <div className="space-x-2">
+          <Link href={`/wedding/${plan.weddingId}/edit`}>
+            <Button variant="outline">
+              <Pencil />
+              Edit & Regenerate
+            </Button>
+          </Link>
+          <Link href={`/wedding/${plan.weddingId}/tasks`}>
+            <Button>
+              <ClipboardList className="w-4 h-4 mr-2" />
+              View Tasks
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-8">

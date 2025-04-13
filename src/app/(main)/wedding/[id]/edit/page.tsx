@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import FormCard from "@/components/create-wedding-plan/formCard";
 import { useParams } from "next/navigation";
 import { Wedding } from "@/types/wedding";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function EditWeddingPage() {
   const params = useParams();
@@ -61,8 +63,13 @@ export default function EditWeddingPage() {
   };
 
   return (
-    <div className="container mx-auto py-6">
-      <h1 className="text-3xl font-bold mb-6">Edit Wedding Plan</h1>
+    <div className="container mx-auto py-6 px-6 md:px-12">
+      <div className="flex flex-row w-full justify-between">
+        <h1 className="text-3xl font-bold mb-6">Edit Wedding Plan</h1>
+        <Link href={`/wedding/${params.id}/plan`}>
+          <Button variant="outline">Cancel</Button>
+        </Link>
+      </div>
       <FormCard weddingId={params.id as string} defaultValues={defaultValues} />
     </div>
   );
