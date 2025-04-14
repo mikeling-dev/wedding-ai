@@ -113,7 +113,7 @@ export default async function TasksPage(props: PageProps) {
               </Button>
             </Link>
           </div>
-          <AddTaskDialog planId={plan.id} categories={categories} />
+          <AddTaskDialog planId={plan.id} categories={defaultCategories} />
         </div>
       </div>
 

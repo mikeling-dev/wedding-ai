@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -105,6 +106,9 @@ const PartnerProfile = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Invite Partner</DialogTitle>
+            <DialogDescription>
+              Invite your partner to collaborate on your wedding plan
+            </DialogDescription>
           </DialogHeader>
           <form className="flex flex-col gap-2" onSubmit={handleInvite}>
             <Label htmlFor="email">Partner&apos;s email address</Label>
@@ -143,6 +147,9 @@ const PartnerProfile = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Partner Information</DialogTitle>
+          <DialogDescription>
+            Wedding plans will only stays with the creator after unlink
+          </DialogDescription>
         </DialogHeader>
         <div>
           <p>

@@ -4,6 +4,7 @@ import HeroBg from "../../public/hero-bg-real.jpg";
 // import HeroBg from "../../public/wedding-bg-3.jpg";
 import { Button } from "./ui/button";
 import StartPlanningBtn from "./StartPlanningBtn";
+import Link from "next/link";
 
 const HeroSection = () => {
   return (
@@ -26,9 +27,9 @@ const HeroSection = () => {
           </p>
           <div className="flex flex-col md:flex-row gap-2 justify-center mt-3">
             <StartPlanningBtn />
-            <Button variant={"secondary"} disabled={true}>
-              Become Vendor (Coming soon)
-            </Button>
+            <Link href="/vendor/interest-form">
+              <Button variant={"secondary"}>Become Vendor</Button>
+            </Link>
           </div>
         </div>
       </div>

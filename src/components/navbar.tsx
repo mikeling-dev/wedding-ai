@@ -3,7 +3,13 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
 import {
   Dialog,
   DialogContent,
@@ -55,10 +61,11 @@ const MenuContent = memo(
           My Wedding Plans
         </Button>
       </Link>
-
-      <Button variant="ghost" className="w-full justify-start" disabled>
-        Become Vendor (Coming Soon)
-      </Button>
+      <Link href="/vendor/interest-form">
+        <Button variant="ghost" className="w-full justify-start">
+          Become Vendor
+        </Button>
+      </Link>
 
       <Card className="flex flex-col items-start gap-2 p-4">
         <p className="text-sm text-muted-foreground">Access</p>
@@ -160,9 +167,10 @@ export default function Navbar() {
                         href="/"
                         className="dancing-text text-3xl font-bold"
                       >
-                        Wedding AI
+                        Vibe Wedding
                       </Link>
                     </SheetTitle>
+                    <SheetDescription />
                     <MenuContent
                       user={user}
                       partner={partner}

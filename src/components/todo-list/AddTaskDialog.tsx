@@ -9,6 +9,7 @@ import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -89,6 +90,7 @@ export function AddTaskDialog({ planId, categories }: AddTaskDialogProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Task</DialogTitle>
+          <DialogDescription />
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -148,7 +150,7 @@ export function AddTaskDialog({ planId, categories }: AddTaskDialogProps) {
               <SelectTrigger>
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="overflow-y-scroll">
                 {categories.map((category) => (
                   <SelectItem key={category.name} value={category.name}>
                     {category.name}

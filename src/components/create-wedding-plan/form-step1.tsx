@@ -147,7 +147,7 @@ export default function FormStep1({
                       Latin American
                     </SelectItem>
                     <SelectItem value="Japanese">Japanese</SelectItem>
-                    <SelectItem value="Korean">Malay</SelectItem>
+                    <SelectItem value="Korean">Korean</SelectItem>
                     <SelectItem value="Malay">Malay</SelectItem>
                     <SelectItem value="Others">Others</SelectItem>
                   </SelectContent>
