@@ -134,13 +134,13 @@ export async function POST(req: NextRequest) {
           {
             "name": "category name",
             "description": "brief description",
-            "icon": "suggested icon name from Remix Icon (ri-*)"
+            "icon": "suggested icon name from Lucide React Icon"
           }
         ],
         "todoList": [
           {
             "title": "task title",
-            "description": "task description",
+            "description": "task description or recommendation",
             "category": "corresponding category name from categories",
             "dueDate": "specific date in YYYY-MM-DD format",
             "status": "pending"

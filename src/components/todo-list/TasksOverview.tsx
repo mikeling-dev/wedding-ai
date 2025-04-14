@@ -25,7 +25,7 @@ export function TasksOverview({
         <div className="flex justify-between">
           <div className="flex md:items-center flex-col md:flex-row gap-2 md:gap-8">
             <div className="flex items-center gap-1.5 text-sm md:text-lg">
-              <div className="p-2 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
+              <div className="p-2 rounded-full min-w-10 h-10 bg-primary/10 flex items-center justify-center text-primary font-semibold">
                 {daysUntilWedding}
               </div>
               <div>

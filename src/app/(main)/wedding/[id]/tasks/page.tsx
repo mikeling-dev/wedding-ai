@@ -87,19 +87,19 @@ export default async function TasksPage(props: PageProps) {
 
   return (
     <div className="w-full px-6 md:px-12 py-8 space-y-4">
-      <div className="flex flex-col md:flex-row justify-between gap-2">
+      <div className="flex flex-col md:flex-row justify-between gap-4">
         <div className="flex flex-col gap-2">
           <h1 className="text-xl md:text-3xl font-bold">Wedding To-Do List</h1>
           <p>Track and manage all your wedding planning tasks in one place.</p>
         </div>
-        <div className="flex gap-2">
-          <AddTaskDialog planId={plan.id} categories={categories} />
+        <div className="flex gap-2 w-full justify-between">
           <Link href={`/wedding/${params.id}/plan`}>
             <Button variant="outline">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Plan
             </Button>
           </Link>
+          <AddTaskDialog planId={plan.id} categories={categories} />
         </div>
       </div>
 
@@ -115,7 +115,7 @@ export default async function TasksPage(props: PageProps) {
           if (categoryTasks.length === 0) return null;
 
           return (
-            <Card key={category.name}>
+            <Card key={category.name} className="gap-3">
               <CardHeader className="flex flex-row justify-between">
                 <div>
                   <CardTitle>{category.name}</CardTitle>

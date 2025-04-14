@@ -58,8 +58,12 @@ export function TaskItem({
 
   return (
     <>
-      <div className="flex items-start gap-2">
-        <Checkbox checked={isCompleted} onCheckedChange={onToggle} />
+      <div className="flex items-start gap-3">
+        <Checkbox
+          checked={isCompleted}
+          onCheckedChange={onToggle}
+          className="mt-2"
+        />
         <div className="flex-1 space-y-1">
           <div className="flex items-center justify-between">
             <p
