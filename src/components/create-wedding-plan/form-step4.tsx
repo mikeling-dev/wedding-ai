@@ -140,9 +140,9 @@ export default function FormStep4({
 
         <Card className="">
           <CardHeader>
-            <CardTitle>Wedding Summary</CardTitle>
+            <CardTitle className="text-center">Wedding Summary</CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-4">
+          <CardContent className="grid gap-4 text-center">
             <div className="space-y-4">
               <div>
                 <p className="font-medium">The Couple</p>

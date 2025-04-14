@@ -70,6 +70,22 @@ export async function POST(req: NextRequest) {
     // Get wedding details from request body
     const weddingDetails = await req.json();
 
+    // First, delete any existing plan and its tasks for this wedding
+    await prisma.$transaction([
+      prisma.task.deleteMany({
+        where: {
+          plan: {
+            weddingId: weddingDetails.weddingId,
+          },
+        },
+      }),
+      prisma.plan.deleteMany({
+        where: {
+          weddingId: weddingDetails.weddingId,
+        },
+      }),
+    ]);
+
     // Select model based on user's subscription tier
     const model = user.subscription === "PREMIUM" ? "gpt-4o" : "gpt-4o-mini";
 
