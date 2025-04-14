@@ -62,7 +62,11 @@ const MenuContent = memo(
         </Button>
       </Link>
       <Link href="/vendor/interest-form">
-        <Button variant="ghost" className="w-full justify-start">
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          onClick={() => setOpen(false)}
+        >
           Become Vendor
         </Button>
       </Link>
