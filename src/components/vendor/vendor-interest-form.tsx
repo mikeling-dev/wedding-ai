@@ -33,6 +33,7 @@ import { Category } from "@prisma/client";
 import { Textarea } from "@/components/ui/textarea";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import { toast } from "sonner";
 
 interface IState {
   name: string;
@@ -75,6 +76,7 @@ const phoneInputStyles = {
 } as React.CSSProperties;
 
 export default function VendorInterestForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [states, setStates] = useState<IState[]>([]);
   const [stateMap, setStateMap] = useState<Record<string, string>>({}); // Map isoCode to name
   const countries = Country.getAllCountries() as ICountry[];
@@ -143,6 +145,7 @@ export default function VendorInterestForm() {
 
   const onSubmit = async (data: FormValues) => {
     try {
+      setIsSubmitting(true);
       // Convert state isoCode to name before submitting
       const formData = {
         ...data,
@@ -151,9 +154,33 @@ export default function VendorInterestForm() {
           data.country,
         state: data.state ? stateMap[data.state] || data.state : undefined,
       };
-      console.log(formData);
+
+      const response = await fetch("/api/vendor-interest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to submit form");
+      }
+
+      // Show success message
+      toast.success("Thank you for your interest! We'll be in touch soon.");
+
+      // Reset form
+      form.reset();
     } catch (error) {
       console.error("Error submitting form:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to submit form"
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -430,8 +457,8 @@ export default function VendorInterestForm() {
           )}
         />
 
-        <Button type="submit" className="w-full">
-          Submit
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
         </Button>
       </form>
     </Form>
