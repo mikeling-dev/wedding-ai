@@ -24,6 +24,8 @@ import {
 } from "../ui/dialog";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Spinner } from "../ui/spinner";
+import Link from "next/link";
 
 export function WeddingList() {
   const { weddings, loading, error, mutate } = useWeddings();
@@ -62,7 +64,9 @@ export function WeddingList() {
         <h2 className="text-2xl font-semibold mb-4">Your Wedding Plans</h2>
         <div className="space-y-4">
           <Card className="w-full animate-pulse">
-            <CardContent className="h-32" />
+            <CardContent className="h-32 flex justify-center items-center">
+              <Spinner /> Loading...
+            </CardContent>
           </Card>
         </div>
       </div>
@@ -83,7 +87,12 @@ export function WeddingList() {
   if (weddings.length === 0) {
     return (
       <div className="w-full py-8 px-6 md:px-12">
-        <h2 className="text-2xl font-semibold mb-4">Your Wedding Plans</h2>
+        <div className="w-full flex flex-row justify-between">
+          <h2 className="text-2xl font-semibold mb-4">Your Wedding Plans</h2>
+          <Link href="/create-wedding-plan">
+            <Button>Create plan</Button>
+          </Link>
+        </div>
         <Card>
           <CardContent className="py-4">
             <p className="text-muted-foreground text-center">
