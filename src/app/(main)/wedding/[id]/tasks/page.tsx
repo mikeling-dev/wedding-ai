@@ -96,8 +96,8 @@ export default async function TasksPage(props: PageProps) {
 
   return (
     <div className="w-full px-6 md:px-12 py-8 space-y-4">
-      <div className="flex flex-col md:flex-row justify-between gap-4">
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col justify-between gap-4">
+        <div className="flex flex-col items-center gap-2">
           <h1 className="text-xl md:text-3xl font-bold">Wedding To-Do List</h1>
           <p>Track and manage all your wedding planning tasks in one place.</p>
         </div>
