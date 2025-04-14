@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
         2. A timeline with key phases (e.g., Planning Phase, Booking Phase, Design Phase, Execution Phase) customized to accommodate cultural or religious requirements (e.g., auspicious dates, pre-wedding rituals). Use relative time ranges like '6 Months Before', '1 Month Before' for the timeline phases.
         3. A detailed budget breakdown with percentages for different categories, including a category for cultural/religious expenses (e.g., ceremonial items, officiant fees). Assume a total budget of $30,000 unless otherwise specified.
         4. A list of key categories (options: venue, catering, transportation, cakeAndDessert, photography, attire, entertainment, decorAndFlowers, gift, guests, cultural, religious, miscellaneous, finalisation, others) with brief descriptions that reflect the couple's traditions and needs.
-        5. A to-do list organized by categories, with 3-5 tasks per category. For the Cultural/Religious category, include specific tasks the couple must complete to honor their religion and cultural background (e.g., arranging a specific ceremony, consulting a religious leader, or preparing traditional items). For each task, calculate a specific due date based on the wedding date (${weddingDetails.weddingDate}).
+        5. A to-do list organized by categories, with atleast 3-5 tasks per category. For the Cultural/Religious category, include specific tasks the couple must complete to honor their religion and cultural background (e.g., arranging a specific ceremony, consulting a religious leader, or preparing traditional items). For each task, calculate a specific due date based on the wedding date (${weddingDetails.weddingDate}).
       
       Return the response as a JSON object with the following structure:
     {
@@ -189,7 +189,7 @@ export async function POST(req: NextRequest) {
         },
       ],
       temperature: 0.7,
-      max_tokens: user.subscription === "PREMIUM" ? 4000 : 2000,
+      max_tokens: user.subscription === "PREMIUM" ? 6000 : 2000,
     });
 
     const plan = completion.choices[0]?.message?.content;
