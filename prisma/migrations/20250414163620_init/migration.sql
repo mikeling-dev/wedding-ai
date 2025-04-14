@@ -5,7 +5,13 @@ CREATE TYPE "Tier" AS ENUM ('BASIC', 'PREMIUM');
 CREATE TYPE "InviteStatus" AS ENUM ('PENDING', 'ACCEPTED', 'DENIED');
 
 -- CreateEnum
-CREATE TYPE "Category" AS ENUM ('VENUE', 'CATERING', 'PHOTOGRAPHY', 'FLORIST', 'ENTERTAINMENT', 'PROFESSIONALS', 'OTHER');
+CREATE TYPE "WeddingRole" AS ENUM ('CREATOR', 'PARTNER', 'HELPER');
+
+-- CreateEnum
+CREATE TYPE "TaskCategory" AS ENUM ('VENUE', 'CATERING', 'TRANSPORTATION', 'CAKE_AND_DESSERT', 'PHOTOGRAPHY', 'ATTIRE', 'ENTERTAINMENT', 'DECOR_AND_FLOWERS', 'GIFT', 'GUESTS', 'CULTURAL', 'RELIGIOUS', 'MISCELLANEOUS', 'FINALISATION', 'OTHERS');
+
+-- CreateEnum
+CREATE TYPE "Category" AS ENUM ('VENUE', 'CATERING', 'TRANSPORTATION', 'PHOTOGRAPHY', 'ATTIRE', 'DECOR_AND_FLOWERS', 'CAKE_AND_DESSERT', 'ENTERTAINMENT', 'GIFT', 'PROFESSIONALS', 'OTHER');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -38,10 +44,13 @@ CREATE TABLE "Invitation" (
 -- CreateTable
 CREATE TABLE "Wedding" (
     "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "phoneNumber" TEXT,
     "partner1Name" TEXT NOT NULL,
     "partner2Name" TEXT NOT NULL,
     "date" TIMESTAMP(3),
-    "location" TEXT,
+    "country" TEXT,
+    "state" TEXT,
     "theme" TEXT,
     "culturalBackground" TEXT,
     "religion" TEXT,
@@ -74,8 +83,10 @@ CREATE TABLE "Task" (
     "planId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
+    "remark" TEXT,
     "dueDate" TIMESTAMP(3),
     "isCompleted" BOOLEAN NOT NULL DEFAULT false,
+    "category" "TaskCategory" NOT NULL DEFAULT 'OTHERS',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -121,11 +132,32 @@ CREATE TABLE "WeddingListing" (
 );
 
 -- CreateTable
-CREATE TABLE "_UserToWedding" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL,
+CREATE TABLE "WeddingUser" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "weddingId" TEXT NOT NULL,
+    "role" "WeddingRole" NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "_UserToWedding_AB_pkey" PRIMARY KEY ("A","B")
+    CONSTRAINT "WeddingUser_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "VendorInterests" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "businessName" TEXT,
+    "email" TEXT NOT NULL,
+    "phoneNumber" TEXT NOT NULL,
+    "country" TEXT NOT NULL,
+    "state" TEXT,
+    "categories" "Category"[],
+    "description" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "VendorInterests_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -150,7 +182,16 @@ CREATE UNIQUE INDEX "Vendor_userId_key" ON "Vendor"("userId");
 CREATE UNIQUE INDEX "Vendor_email_key" ON "Vendor"("email");
 
 -- CreateIndex
-CREATE INDEX "_UserToWedding_B_index" ON "_UserToWedding"("B");
+CREATE INDEX "WeddingUser_userId_idx" ON "WeddingUser"("userId");
+
+-- CreateIndex
+CREATE INDEX "WeddingUser_weddingId_idx" ON "WeddingUser"("weddingId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "WeddingUser_userId_weddingId_key" ON "WeddingUser"("userId", "weddingId");
+
+-- CreateIndex
+CREATE INDEX "VendorInterests_email_idx" ON "VendorInterests"("email");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_partnerId_fkey" FOREIGN KEY ("partnerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -180,7 +221,7 @@ ALTER TABLE "WeddingListing" ADD CONSTRAINT "WeddingListing_weddingId_fkey" FORE
 ALTER TABLE "WeddingListing" ADD CONSTRAINT "WeddingListing_listingId_fkey" FOREIGN KEY ("listingId") REFERENCES "Listing"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_UserToWedding" ADD CONSTRAINT "_UserToWedding_A_fkey" FOREIGN KEY ("A") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "WeddingUser" ADD CONSTRAINT "WeddingUser_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_UserToWedding" ADD CONSTRAINT "_UserToWedding_B_fkey" FOREIGN KEY ("B") REFERENCES "Wedding"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "WeddingUser" ADD CONSTRAINT "WeddingUser_weddingId_fkey" FOREIGN KEY ("weddingId") REFERENCES "Wedding"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

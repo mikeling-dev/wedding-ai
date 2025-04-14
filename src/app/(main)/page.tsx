@@ -2,6 +2,7 @@ import HeroSection from "@/components/HeroSection";
 import { WeddingList } from "@/components/weddings/wedding-list";
 import HowTo from "@/components/HowTo";
 import Pricing from "@/components/Pricing";
+import MarketplaceSection from "@/components/MarketplaceSection";
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
         </div>
         <Pricing />
       </section>
+      <MarketplaceSection />
     </div>
   );
 }

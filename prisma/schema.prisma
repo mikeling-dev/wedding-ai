@@ -179,12 +179,33 @@ model WeddingUser {
   @@index([userId])
   @@index([weddingId])
 }
+
 enum Category {
   VENUE
   CATERING
+  TRANSPORTATION
   PHOTOGRAPHY
-  FLORIST
+  ATTIRE
+  DECOR_AND_FLOWERS
+  CAKE_AND_DESSERT
   ENTERTAINMENT
+  GIFT
   PROFESSIONALS
   OTHER
+}
+
+model VendorInterests {
+  id            String    @id @default(uuid())
+  name          String
+  businessName  String?
+  email         String
+  phoneNumber   String
+  country       String
+  state         String?
+  categories    Category[]
+  description   String    @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([email])
 }
