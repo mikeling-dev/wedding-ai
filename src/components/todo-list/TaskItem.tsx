@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useOptimistic, useTransition } from "react";
 import { format } from "date-fns";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,12 +30,30 @@ export function TaskItem({
   title,
   description,
   dueDate,
-  isCompleted,
+  isCompleted: initialIsCompleted,
   onToggle,
 }: TaskItemProps) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [optimisticIsCompleted, setOptimisticIsCompleted] =
+    useOptimistic(initialIsCompleted);
+
+  const handleToggle = async () => {
+    startTransition(async () => {
+      // Optimistically update the UI
+      setOptimisticIsCompleted(!optimisticIsCompleted);
+
+      try {
+        await onToggle();
+      } catch (error) {
+        // Revert the optimistic update if the server request fails
+        setOptimisticIsCompleted(optimisticIsCompleted);
+        console.error("Error toggling task:", error);
+      }
+    });
+  };
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -60,15 +79,18 @@ export function TaskItem({
     <>
       <div className="flex items-start gap-3">
         <Checkbox
-          checked={isCompleted}
-          onCheckedChange={onToggle}
+          checked={optimisticIsCompleted}
+          onCheckedChange={handleToggle}
           className="mt-2"
+          disabled={isPending}
         />
         <div className="flex-1 space-y-1">
           <div className="flex items-center justify-between">
             <p
               className={
-                isCompleted ? "line-through text-muted-foreground" : ""
+                optimisticIsCompleted
+                  ? "line-through text-muted-foreground"
+                  : ""
               }
             >
               {title}
@@ -78,6 +100,7 @@ export function TaskItem({
               size="icon"
               onClick={() => setDeleteDialogOpen(true)}
               className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              disabled={isPending}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -85,7 +108,7 @@ export function TaskItem({
           {description && (
             <p
               className={`text-sm ${
-                isCompleted
+                optimisticIsCompleted
                   ? "line-through text-muted-foreground"
                   : "text-muted-foreground"
               }`}

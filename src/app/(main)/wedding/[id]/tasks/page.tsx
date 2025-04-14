@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { TaskItem } from "@/components/todo-list/TaskItem";
 import { TasksOverview } from "@/components/todo-list/TasksOverview";
 import { AddTaskDialog } from "@/components/todo-list/AddTaskDialog";
+import { revalidatePath } from "next/cache";
 
 interface PageProps {
   params: Promise<{
@@ -44,10 +45,18 @@ async function getTasks(weddingId: string) {
 async function toggleTask(taskId: string, isCompleted: boolean) {
   "use server";
 
-  await prisma.task.update({
-    where: { id: taskId },
-    data: { isCompleted },
-  });
+  try {
+    await prisma.task.update({
+      where: { id: taskId },
+      data: { isCompleted },
+    });
+
+    // Revalidate the tasks page to update the task counts and progress
+    revalidatePath("/wedding/[id]/tasks");
+  } catch (error) {
+    console.error("Error updating task:", error);
+    throw error;
+  }
 }
 
 export default async function TasksPage(props: PageProps) {
