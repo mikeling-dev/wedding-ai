@@ -106,17 +106,22 @@ export function TasksByDate({ tasks, onToggle }: TasksByDateProps) {
                       );
                     })
                     .map((task) => (
-                      <TaskItem
-                        key={task.id}
-                        id={task.id}
-                        title={task.title}
-                        description={task.description}
-                        dueDate={task.dueDate}
-                        isCompleted={task.isCompleted}
-                        onToggle={async () => {
-                          await onToggle(task.id, !task.isCompleted);
-                        }}
-                      />
+                      <div key={task.id}>
+                        <TaskItem
+                          key={task.id}
+                          id={task.id}
+                          title={task.title}
+                          description={task.description}
+                          dueDate={task.dueDate}
+                          isCompleted={task.isCompleted}
+                          onToggle={async () => {
+                            await onToggle(task.id, !task.isCompleted);
+                          }}
+                        />
+                        <p className="bg-primary/10 text-primary rounded-sm px-2 w-fit ml-7 mt-2">
+                          {task.category}
+                        </p>
+                      </div>
                     ))}
                 </div>
               </CardContent>

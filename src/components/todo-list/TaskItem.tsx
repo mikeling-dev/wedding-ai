@@ -86,13 +86,7 @@ export function TaskItem({
         />
         <div className="flex-1 space-y-1">
           <div className="flex items-center justify-between">
-            <p
-              className={
-                optimisticIsCompleted
-                  ? "line-through text-muted-foreground"
-                  : ""
-              }
-            >
+            <p className={optimisticIsCompleted ? "text-muted-foreground" : ""}>
               {title}
             </p>
             <Button
@@ -109,7 +103,7 @@ export function TaskItem({
             <p
               className={`text-sm ${
                 optimisticIsCompleted
-                  ? "line-through text-muted-foreground"
+                  ? " text-muted-foreground"
                   : "text-muted-foreground"
               }`}
             >
@@ -117,7 +111,7 @@ export function TaskItem({
             </p>
           )}
           {dueDate && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm font-medium text-muted-foreground">
               Due: {format(new Date(dueDate), "PPP")}
             </p>
           )}
