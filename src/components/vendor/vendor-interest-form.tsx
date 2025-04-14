@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { Category } from "@prisma/client";
 import { Textarea } from "@/components/ui/textarea";
 import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 interface IState {
   name: string;
@@ -54,13 +55,28 @@ const formSchema = z.object({
   categories: z
     .array(z.nativeEnum(Category))
     .min(1, "Select at least one category"),
-  description: z.string().min(50, "Description must be at least 50 characters"),
+  description: z.string().min(30, "Description must be at least 30 characters"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
+// Add this CSS at the top level of your component
+const phoneInputStyles = {
+  "--PhoneInputCountry": {
+    marginRight: "8px",
+    alignItems: "center",
+  },
+  "--PhoneInput-flagHeight": "16px !important",
+  "--PhoneInputCountryFlag-height": "16px !important",
+  "--PhoneInputCountryFlag-width": "24px !important",
+  "--PhoneInputCountrySelect-marginRight": "0.5rem",
+  "--PhoneInputCountrySelectArrow-width": "8px",
+  "--PhoneInputCountrySelectArrow-marginLeft": "8px",
+} as React.CSSProperties;
+
 export default function VendorInterestForm() {
   const [states, setStates] = useState<IState[]>([]);
+  const [stateMap, setStateMap] = useState<Record<string, string>>({}); // Map isoCode to name
   const countries = Country.getAllCountries() as ICountry[];
   const [openCountry, setOpenCountry] = useState(false);
   const [openState, setOpenState] = useState(false);
@@ -91,6 +107,14 @@ export default function VendorInterestForm() {
       ) as IState[];
       setStates(countryStates);
       setFilteredStates(countryStates);
+
+      // Create a map of isoCode to state name
+      const stateNameMap = countryStates.reduce((acc, state) => {
+        acc[state.isoCode] = state.name;
+        return acc;
+      }, {} as Record<string, string>);
+      setStateMap(stateNameMap);
+
       if (form.getValues("state")) {
         form.setValue("state", "");
       }
@@ -119,8 +143,15 @@ export default function VendorInterestForm() {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      // TODO: Implement API call
-      console.log(data);
+      // Convert state isoCode to name before submitting
+      const formData = {
+        ...data,
+        country:
+          countries.find((c) => c.isoCode === data.country)?.name ||
+          data.country,
+        state: data.state ? stateMap[data.state] || data.state : undefined,
+      };
+      console.log(formData);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -179,13 +210,16 @@ export default function VendorInterestForm() {
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
                 <FormControl>
-                  <PhoneInput
-                    international
-                    defaultCountry="US"
-                    value={field.value}
-                    onChange={(value) => field.onChange(value || "")}
-                    className="flex h-9 w-full [&>input]:focus:outline-none rounded-md border px-3 py-2 text-sm shadow-sm"
-                  />
+                  <div className="relative">
+                    <PhoneInput
+                      international
+                      defaultCountry="US"
+                      value={field.value}
+                      onChange={(value) => field.onChange(value || "")}
+                      className="flex h-9 w-full [&>input]:focus:outline-none rounded-md border px-3 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                      style={phoneInputStyles}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -272,9 +306,7 @@ export default function VendorInterestForm() {
                         disabled={!selectedCountry}
                       >
                         {field.value
-                          ? states.find(
-                              (state) => state.isoCode === field.value
-                            )?.name
+                          ? stateMap[field.value] || "Select state..."
                           : "Select state..."}
                         <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -388,7 +420,7 @@ export default function VendorInterestForm() {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Tell us about your services and experience..."
+                  placeholder="Tell us about your services and experience, attach your website url if applicable..."
                   className="min-h-[100px]"
                   {...field}
                 />
