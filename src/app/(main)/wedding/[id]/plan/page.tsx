@@ -124,6 +124,7 @@ export default async function PlanPage(props: PageProps) {
           <PlanBudget
             budget={parsedBudget}
             totalBudget={plan.wedding.budget || 0}
+            country={plan.wedding.country || ""}
           />
           <PlanTimeline
             timeline={parsedTimeline}

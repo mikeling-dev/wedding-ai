@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Country } from "country-state-city";
 
 interface BudgetItem {
   category: string;
@@ -10,12 +11,14 @@ interface BudgetItem {
 interface PlanBudgetProps {
   budget: BudgetItem[];
   totalBudget: number;
+  country: string;
 }
 
-export function PlanBudget({ budget, totalBudget }: PlanBudgetProps) {
-  const formatter = new Intl.NumberFormat("en-US", {
+export function PlanBudget({ budget, totalBudget, country }: PlanBudgetProps) {
+  const countryData = Country.getCountryByCode(country);
+  const formatter = new Intl.NumberFormat(undefined, {
     style: "currency",
-    currency: "USD",
+    currency: countryData?.currency || "USD",
   });
 
   return (

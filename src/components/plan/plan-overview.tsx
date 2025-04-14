@@ -2,6 +2,7 @@ import { Wedding } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { Calendar, MapPin, Users, Wallet } from "lucide-react";
+import { Country } from "country-state-city";
 
 interface PlanOverviewProps {
   overview: string;
@@ -9,6 +10,12 @@ interface PlanOverviewProps {
 }
 
 export function PlanOverview({ overview, wedding }: PlanOverviewProps) {
+  const countryData = Country.getCountryByCode(wedding.country || "");
+  const formatter = new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency: countryData?.currency || "USD",
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -48,10 +55,7 @@ export function PlanOverview({ overview, wedding }: PlanOverviewProps) {
             <Wallet className="h-5 w-5 text-primary" />
             <p className="text-sm font-medium">Budget</p>
             <p className="text-sm text-muted-foreground">
-              {new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(wedding.budget || 0)}
+              {formatter.format(wedding.budget || 0)}
             </p>
           </div>
         </div>
