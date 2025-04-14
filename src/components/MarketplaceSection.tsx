@@ -9,7 +9,7 @@ export default function MarketplaceSection() {
       <div className="max-w-6xl mx-auto">
         <div className="md:hidden mb-8">
           <Image
-            src="/marketplace-cover.jpg"
+            src={MarketplaceBg}
             alt="Wedding Marketplace"
             width={800}
             height={400}
@@ -21,15 +21,10 @@ export default function MarketplaceSection() {
             <h2 className="text-3xl font-bold">Wedding Marketplace</h2>
             <div className="space-y-4 text-gray-600">
               <p>
-                Discover a curated selection of premium wedding vendors and
-                services, all in one place. Our marketplace connects you with
-                trusted professionals who can bring your dream wedding to life.
-              </p>
-              <p>
-                From stunning venues and talented photographers to exquisite
-                catering and beautiful decor, find everything you need for your
-                special day. Each vendor is carefully vetted to ensure quality
-                and reliability.
+                Find top-tier wedding vendors—venues, photographers, caterers,
+                decor, and more—all in one place. Connect with trusted
+                professionals to bring your vision to life. Every vendor is
+                vetted for quality and reliability.
               </p>
               <p>
                 Are you a wedding vendor? Join our marketplace to showcase your
