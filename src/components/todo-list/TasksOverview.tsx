@@ -7,12 +7,16 @@ interface TasksOverviewProps {
   weddingDate: Date;
   totalTasks: number;
   completedTasks: number;
+  currentFilter: string;
+  currentSort: string;
 }
 
 export function TasksOverview({
   weddingDate,
   totalTasks,
   completedTasks,
+  currentFilter,
+  currentSort,
 }: TasksOverviewProps) {
   const daysUntilWedding = differenceInDays(new Date(weddingDate), new Date());
   const progressPercentage =
@@ -46,7 +50,7 @@ export function TasksOverview({
           </div>
 
           {/* Filter Button */}
-          <TaskFilter />
+          <TaskFilter currentFilter={currentFilter} currentSort={currentSort} />
         </div>
 
         {/* Progress Section */}

@@ -1,19 +1,22 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { TaskItem } from "@/components/todo-list/TaskItem";
 import { TasksOverview } from "@/components/todo-list/TasksOverview";
 import { AddTaskDialog } from "@/components/todo-list/AddTaskDialog";
+import { TasksByDate } from "@/components/todo-list/TasksByDate";
+import { TasksByCategory } from "@/components/todo-list/TasksByCategory";
 import { revalidatePath } from "next/cache";
 
 interface PageProps {
   params: Promise<{
     id: string;
   }>;
-  searchParams: { filter?: string };
+  searchParams: {
+    filter?: string;
+    sortBy?: "category" | "date";
+  };
 }
 
 interface DbCategory {
@@ -27,9 +30,7 @@ async function getTasks(weddingId: string) {
     where: { weddingId },
     include: {
       tasks: {
-        orderBy: {
-          category: "asc",
-        },
+        orderBy: [{ dueDate: "asc" }, { category: "asc" }],
       },
       wedding: true,
     },
@@ -64,6 +65,7 @@ export default async function TasksPage(props: PageProps) {
   const plan = await getTasks(params.id);
   const categories = (plan.categories as DbCategory[] | null) || [];
   const filter = props.searchParams.filter || "all";
+  const sortBy = props.searchParams.sortBy || "category";
 
   // Filter tasks based on the filter parameter
   const filteredTasks = plan.tasks.filter((task) => {
@@ -76,24 +78,6 @@ export default async function TasksPage(props: PageProps) {
   const totalTasks = plan.tasks.length;
   const completedTasks = plan.tasks.filter((task) => task.isCompleted).length;
 
-  // Group tasks by category
-  const tasksByCategory = filteredTasks.reduce((acc, task) => {
-    if (!acc[task.category]) {
-      acc[task.category] = [];
-    }
-    acc[task.category].push(task);
-    return acc;
-  }, {} as Record<string, typeof plan.tasks>);
-
-  // Calculate completed tasks per category
-  const categoryProgress = Object.entries(tasksByCategory).reduce(
-    (acc, [category, tasks]) => {
-      acc[category] = tasks.filter((task) => task.isCompleted).length;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
-
   return (
     <div className="w-full px-6 md:px-12 py-8 space-y-4">
       <div className="flex flex-col justify-between gap-4">
@@ -102,12 +86,14 @@ export default async function TasksPage(props: PageProps) {
           <p>Track and manage all your wedding planning tasks in one place.</p>
         </div>
         <div className="flex gap-2 w-full justify-between">
-          <Link href={`/wedding/${params.id}/plan`}>
-            <Button variant="outline">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Plan
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href={`/wedding/${params.id}/plan`}>
+              <Button variant="outline">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Plan
+              </Button>
+            </Link>
+          </div>
           <AddTaskDialog planId={plan.id} categories={categories} />
         </div>
       </div>
@@ -116,48 +102,28 @@ export default async function TasksPage(props: PageProps) {
         weddingDate={plan.wedding.date!}
         totalTasks={totalTasks}
         completedTasks={completedTasks}
+        currentFilter={filter}
+        currentSort={sortBy}
       />
 
-      <div className="grid gap-4">
-        {categories.map((category: { name: string; description: string }) => {
-          const categoryTasks = tasksByCategory[category.name] || [];
-          if (categoryTasks.length === 0) return null;
-
-          return (
-            <Card key={category.name} className="gap-3">
-              <CardHeader className="flex flex-row justify-between">
-                <div>
-                  <CardTitle>{category.name}</CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {category.description}
-                  </p>
-                </div>
-                <div className="text-sm text-muted-foreground text-right text-nowrap">
-                  {categoryProgress[category.name]} / {categoryTasks.length}{" "}
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {categoryTasks.map((task) => (
-                    <TaskItem
-                      key={task.id}
-                      id={task.id}
-                      title={task.title}
-                      description={task.description}
-                      dueDate={task.dueDate}
-                      isCompleted={task.isCompleted}
-                      onToggle={async () => {
-                        "use server";
-                        await toggleTask(task.id, !task.isCompleted);
-                      }}
-                    />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+      {sortBy === "date" ? (
+        <TasksByDate
+          tasks={filteredTasks}
+          onToggle={async (taskId, isCompleted) => {
+            "use server";
+            await toggleTask(taskId, isCompleted);
+          }}
+        />
+      ) : (
+        <TasksByCategory
+          tasks={filteredTasks}
+          categories={categories}
+          onToggle={async (taskId, isCompleted) => {
+            "use server";
+            await toggleTask(taskId, isCompleted);
+          }}
+        />
+      )}
     </div>
   );
 }
