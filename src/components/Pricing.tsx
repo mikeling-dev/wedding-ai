@@ -37,7 +37,7 @@ const PricingTier = ({
 }: PricingTierProps) => {
   return (
     <Card
-      className={`w-[300px] md:w-full h-full ${
+      className={`w-[280px] sm:w-[300px] md:w-full md:min-w-[400px] h-full ${
         popular ? "border-primary shadow-lg" : ""
       }`}
     >
@@ -62,8 +62,8 @@ const PricingTier = ({
       <CardContent>
         <ul className="space-y-2 h-full">
           {features.map((feature, i) => (
-            <li key={i} className="flex items-center gap-2">
-              <div>
+            <li key={i} className="flex gap-2">
+              <div className="pt-1">
                 <Check
                   className={`h-4 w-4 ${
                     feature.included ? "text-primary" : "text-muted-foreground"
@@ -100,29 +100,31 @@ export default function Pricing() {
   };
 
   const basicFeatures = [
-    { text: "Generate or regenerate up to 3 times", included: true },
-    { text: "Generate plan with basic input preferences", included: true },
+    { text: "Generate or regenerate plans up to 3 times", included: true },
+    { text: "Generate plan with basic preferences input", included: true },
     { text: "Uses GPT-4o-mini model for simpler planning", included: true },
-    { text: "Maximum 15 tasks in todo list", included: true },
-    { text: "Access to marketplace (coming soon)", included: true },
-    { text: "Religion & cultural background preferences", included: false },
-    { text: "Special requests in plan generation", included: false },
-    { text: "Up to 30 tasks in todo lists", included: false },
-    { text: "Guestlist management feature", included: false },
+    { text: "ToDo list with up to 10 tasks", included: true },
+    { text: "Access to marketplace", included: true },
+    // { text: "Religion & cultural background preferences", included: false },
+    // { text: "Special requests in plan generation", included: false },
+    // { text: "Up to 30 tasks in todo lists", included: false },
+    // { text: "Guestlist management feature", included: false },
   ];
 
   const premiumFeatures = [
-    { text: "Generate or regenerate up to 10 times", included: true },
-    { text: "Generate plan with basic input preferences", included: true },
-    { text: "Uses GPT-4o for more intelligent planning", included: true },
-    { text: "Maximum 30 tasks in todo list", included: true },
-    { text: "Access to marketplace (coming soon)", included: true },
+    { text: "Generate or regenerate plans up to 10 times", included: true },
+    {
+      text: "Generate plan with advanced preferences input",
+      included: true,
+    },
+    { text: "Uses GPT-4o for intelligent planning", included: true },
+    { text: "Up to 30 tasks in todo list", included: true },
+    { text: "Access to marketplace", included: true },
     { text: "Religion & cultural background preferences", included: true },
     { text: "Special requests in plan generation", included: true },
-    { text: "Up to 30 tasks in todo lists", included: true },
-    { text: "Guestlist management feature", included: true },
+    { text: "Guestlist management", included: true },
     {
-      text: "Partner have access to all your premium features too",
+      text: "Partner also unlocks all your premium access",
       included: true,
     },
   ];

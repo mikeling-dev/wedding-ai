@@ -20,6 +20,7 @@ import { memo } from "react";
 import { User } from "@/types/user";
 import { Partner } from "@/types/partner";
 import React from "react";
+import { Card } from "./ui/card";
 
 const MenuContent = memo(
   ({
@@ -59,16 +60,16 @@ const MenuContent = memo(
         Become Vendor (Coming Soon)
       </Button>
 
-      <div className="flex flex-col items-start gap-2">
+      <Card className="flex flex-col items-start gap-2 p-4">
         <p className="text-sm text-muted-foreground">Access</p>
         <div className="flex items-center gap-4">
-          <span>{user?.subscription || "Basic"}</span>
+          <span>{user?.subscription || "BASIC"}</span>
           {(!user?.subscription || user.subscription === "BASIC") && (
             <Dialog>
               <DialogTrigger asChild>
                 <Button size="sm">Upgrade</Button>
               </DialogTrigger>
-              <DialogContent className="px-4 w-full">
+              <DialogContent className="px-4 w-full max-h-11/12 overflow-y-scroll">
                 <DialogHeader>
                   <DialogTitle>Upgrade access</DialogTitle>
                   <DialogDescription>
@@ -87,7 +88,7 @@ const MenuContent = memo(
             <p className="font-semibold">{partner?.name}</p>
           </div>
         </div>
-      </div>
+      </Card>
 
       <Button variant="destructive" onClick={logout} className="w-full">
         Logout
@@ -117,7 +118,7 @@ export default function Navbar() {
               {/* Mobile view */}
               <div className="md:hidden">
                 <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-                  <SheetTrigger className="cursor-pointer">
+                  <SheetTrigger className="cursor-pointer" asChild>
                     <Button variant="ghost" className="relative" size="icon">
                       <Menu className="h-5 w-5" />
                     </Button>
