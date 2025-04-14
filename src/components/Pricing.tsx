@@ -51,10 +51,19 @@ const PricingTier = ({
             </span>
           )}
         </CardTitle>
-        <div className="flex items-baseline">
-          <span className="text-3xl font-bold">{price}</span>
+        <div className="flex flex-col items-baseline">
+          <span className="text-3xl font-bold">
+            {price}{" "}
+            {price !== "Free" && (
+              <span className="line-through text-muted-foreground">$16</span>
+            )}
+          </span>
           {price !== "Free" && (
-            <span className="text-muted-foreground ml-1">/month</span>
+            <p className="text-muted-foreground text-sm border py-2 px-4 text-center rounded-lg mt-1">
+              One-off payment,{" "}
+              <span className="font-semibold">life time access</span>. Promotion
+              available until marketplace launches.
+            </p>
           )}
         </div>
         <CardDescription>{description}</CardDescription>
@@ -145,7 +154,7 @@ export default function Pricing() {
       <div className="snap-center shrink-0">
         <PricingTier
           name="Premium"
-          price="$4"
+          price="$10"
           description="For couples who want the full planning experience"
           features={premiumFeatures}
           onSubscribe={handleSubscribe}
