@@ -104,6 +104,7 @@ model Task {
   plan        Plan      @relation(fields: [planId], references: [id])
   title       String
   description String?   @db.Text
+  remark      String?   @db.Text
   dueDate     DateTime?
   isCompleted Boolean   @default(false)
   category    String    // Category name from the plan's categories

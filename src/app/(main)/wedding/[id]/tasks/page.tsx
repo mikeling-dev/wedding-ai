@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { TaskItem } from "@/components/todo-list/TaskItem";
 import { TasksOverview } from "@/components/todo-list/TasksOverview";
+import { AddTaskDialog } from "@/components/todo-list/AddTaskDialog";
 
 interface PageProps {
   params: Promise<{
@@ -38,6 +39,15 @@ async function getTasks(weddingId: string) {
   }
 
   return plan;
+}
+
+async function toggleTask(taskId: string, isCompleted: boolean) {
+  "use server";
+
+  await prisma.task.update({
+    where: { id: taskId },
+    data: { isCompleted },
+  });
 }
 
 export default async function TasksPage(props: PageProps) {
@@ -82,16 +92,19 @@ export default async function TasksPage(props: PageProps) {
           <h1 className="text-xl md:text-3xl font-bold">Wedding To-Do List</h1>
           <p>Track and manage all your wedding planning tasks in one place.</p>
         </div>
-        <Link href={`/wedding/${params.id}/plan`}>
-          <Button variant="outline">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Plan
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <AddTaskDialog planId={plan.id} categories={categories} />
+          <Link href={`/wedding/${params.id}/plan`}>
+            <Button variant="outline">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Plan
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <TasksOverview
-        weddingDate={plan.wedding.date}
+        weddingDate={plan.wedding.date!}
         totalTasks={totalTasks}
         completedTasks={completedTasks}
       />
@@ -126,7 +139,7 @@ export default async function TasksPage(props: PageProps) {
                       isCompleted={task.isCompleted}
                       onToggle={async () => {
                         "use server";
-                        // Server action will be implemented later
+                        await toggleTask(task.id, !task.isCompleted);
                       }}
                     />
                   ))}
