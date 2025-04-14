@@ -29,10 +29,11 @@ import {
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TaskCategory } from "@prisma/client";
 
 interface AddTaskDialogProps {
   planId: string;
-  categories: { name: string; description: string }[];
+  categories: { name: TaskCategory; description: string }[];
 }
 
 export function AddTaskDialog({ planId, categories }: AddTaskDialogProps) {

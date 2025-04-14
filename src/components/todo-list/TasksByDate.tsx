@@ -2,6 +2,7 @@
 import { isToday, isTomorrow, isPast } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TaskItem } from "@/components/todo-list/TaskItem";
+import { TaskCategory } from "@prisma/client";
 
 interface Task {
   id: string;
@@ -9,7 +10,7 @@ interface Task {
   description: string | null;
   dueDate: Date | null;
   isCompleted: boolean;
-  category: string;
+  category: TaskCategory;
 }
 
 interface TasksByDateProps {

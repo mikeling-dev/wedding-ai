@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TaskItem } from "@/components/todo-list/TaskItem";
+import { TaskCategory } from "@prisma/client";
 
 interface Task {
   id: string;
@@ -9,12 +10,12 @@ interface Task {
   description: string | null;
   dueDate: Date | null;
   isCompleted: boolean;
-  category: string;
+  category: TaskCategory;
 }
 
 interface TasksByCategoryProps {
   tasks: Task[];
-  categories: { name: string; description: string }[];
+  categories: { name: TaskCategory; description: string }[];
   onToggle: (taskId: string, isCompleted: boolean) => Promise<void>;
 }
 
@@ -23,46 +24,52 @@ export function TasksByCategory({
   categories,
   onToggle,
 }: TasksByCategoryProps) {
-  // Group tasks by category
-  const tasksByCategory = tasks.reduce((acc, task) => {
-    if (!acc[task.category]) {
-      acc[task.category] = [];
-    }
-    acc[task.category].push(task);
-    return acc;
-  }, {} as Record<string, Task[]>);
+  // If categories array is empty, create categories from unique task categories
+  const effectiveCategories =
+    categories.length > 0
+      ? categories
+      : Array.from(new Set(tasks.map((task) => task.category))).map((cat) => ({
+          name: cat,
+          description: "", // No description available for auto-generated categories
+        }));
 
-  // Calculate completed tasks per category
-  const categoryProgress = Object.entries(tasksByCategory).reduce(
-    (acc, [category, tasks]) => {
-      acc[category] = tasks.filter((task) => task.isCompleted).length;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
-
+  // Helper function to format category name for display
+  const formatCategoryName = (category: TaskCategory) => {
+    return category
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
   return (
     <div className="grid gap-4">
-      {categories.map((category) => {
-        const categoryTasks = tasksByCategory[category.name] || [];
-        if (categoryTasks.length === 0) return null;
+      {effectiveCategories.map((category) => {
+        // Find tasks for this category using case-insensitive comparison
+        const tasksForCategory = tasks.filter(
+          (task) => task.category.toUpperCase() === category.name.toUpperCase()
+        );
 
         return (
-          <Card key={category.name} className="gap-3">
+          <Card
+            key={category.name}
+            className={`gap-3 ${tasksForCategory.length === 0 && "hidden"}`}
+          >
             <CardHeader className="flex flex-row justify-between">
               <div>
-                <CardTitle>{category.name}</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {category.description}
-                </p>
+                <CardTitle>{formatCategoryName(category.name)}</CardTitle>
+                {category.description && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {category.description}
+                  </p>
+                )}
               </div>
               <div className="text-sm text-muted-foreground text-right text-nowrap">
-                {categoryProgress[category.name]} / {categoryTasks.length}{" "}
+                {tasksForCategory.filter((t) => t.isCompleted).length} /{" "}
+                {tasksForCategory.length}
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {categoryTasks.map((task) => (
+                {tasksForCategory.map((task) => (
                   <TaskItem
                     key={task.id}
                     id={task.id}

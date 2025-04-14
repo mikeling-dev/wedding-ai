@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
+import { TaskCategory } from "@prisma/client";
 
 interface TodoListItem {
   title: string;
@@ -15,6 +16,30 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
 
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY || "your-api-key" });
+
+// Map to convert OpenAI's category strings to our TaskCategory enum
+const categoryMap: { [key: string]: TaskCategory } = {
+  venue: "VENUE",
+  catering: "CATERING",
+  transportation: "TRANSPORTATION",
+  "cake & dessert": "CAKE_AND_DESSERT",
+  photography: "PHOTOGRAPHY",
+  attire: "ATTIRE",
+  entertainment: "ENTERTAINMENT",
+  decorAndFlowers: "DECOR_AND_FLOWERS",
+  gift: "GIFT",
+  guests: "GUESTS",
+  cultural: "CULTURAL",
+  religious: "RELIGIOUS",
+  miscellaneous: "MISCELLANEOUS",
+  finalisation: "FINALISATION",
+};
+
+// Function to map category string to TaskCategory enum
+function mapToTaskCategory(category: string): TaskCategory {
+  const normalizedCategory = category.toLowerCase().trim();
+  return categoryMap[normalizedCategory] || "OTHERS";
+}
 
 export async function POST(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
@@ -69,7 +94,7 @@ export async function POST(req: NextRequest) {
         1. A brief overview of the wedding style and vision, inspired by the couple's cultural background and religion, blending traditional elements with modern preferences if applicable.
         2. A timeline with key phases (e.g., Planning Phase, Booking Phase, Design Phase, Execution Phase) customized to accommodate cultural or religious requirements (e.g., auspicious dates, pre-wedding rituals). Use relative time ranges like '6 Months Before', '1 Month Before' for the timeline phases.
         3. A detailed budget breakdown with percentages for different categories, including a category for cultural/religious expenses (e.g., ceremonial items, officiant fees). Assume a total budget of $30,000 unless otherwise specified.
-        4. A list of key categories (options: venue, catering, transportation, cake & dessert, photography, attire, entertainment, decor, gift, guests, cultural, religious, miscellaneous, finalisation, others) with brief descriptions that reflect the couple's traditions and needs.
+        4. A list of key categories (options: venue, catering, transportation, cakeAndDessert, photography, attire, entertainment, decorAndFlowers, gift, guests, cultural, religious, miscellaneous, finalisation, others) with brief descriptions that reflect the couple's traditions and needs.
         5. A to-do list organized by categories, with 3-5 tasks per category. For the Cultural/Religious category, include specific tasks the couple must complete to honor their religion and cultural background (e.g., arranging a specific ceremony, consulting a religious leader, or preparing traditional items). For each task, calculate a specific due date based on the wedding date (${weddingDetails.weddingDate}).
       
       Return the response as a JSON object with the following structure:
@@ -110,7 +135,7 @@ export async function POST(req: NextRequest) {
       1. A brief overview of the wedding style and vision
       2. A timeline with key phases (Planning Phase, Booking Phase, Design Phase, etc.) using relative time ranges like '6 Months Before', '1 Month Before'
       3. A detailed budget breakdown with percentages for different categories
-      4. A list of key categories (options: venue, catering, transportation, cake & dessert, photography, attire, entertainment, decor, gift, guests, miscellaneous, finalisation, others) with brief descriptions.
+      4. A list of key categories (options: venue, catering, transportation, cakeAndDessert, photography, attire, entertainment, decorAndFlowers, gift, guests, miscellaneous, finalisation, others) with brief descriptions.
       5. A todo list organized by categories with at least 1-2 tasks per category. For each task, calculate a specific due date based on the wedding date (${weddingDetails.weddingDate}).
       
       Return the response as a JSON object with the following structure:
@@ -215,7 +240,7 @@ export async function POST(req: NextRequest) {
           description: task.description,
           dueDate: new Date(task.dueDate),
           isCompleted: false,
-          category: task.category,
+          category: mapToTaskCategory(task.category),
         })),
       });
     }

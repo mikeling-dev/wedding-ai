@@ -8,19 +8,20 @@ import { AddTaskDialog } from "@/components/todo-list/AddTaskDialog";
 import { TasksByDate } from "@/components/todo-list/TasksByDate";
 import { TasksByCategory } from "@/components/todo-list/TasksByCategory";
 import { revalidatePath } from "next/cache";
+import { TaskCategory } from "@prisma/client";
 
 interface PageProps {
   params: Promise<{
     id: string;
   }>;
-  searchParams: {
+  searchParams: Promise<{
     filter?: string;
     sortBy?: "category" | "date";
-  };
+  }>;
 }
 
 interface DbCategory {
-  name: string;
+  name: TaskCategory;
   description: string;
   icon: string;
 }
@@ -31,6 +32,14 @@ async function getTasks(weddingId: string) {
     include: {
       tasks: {
         orderBy: [{ dueDate: "asc" }, { category: "asc" }],
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          dueDate: true,
+          isCompleted: true,
+          category: true,
+        },
       },
       wedding: true,
     },
@@ -62,10 +71,20 @@ async function toggleTask(taskId: string, isCompleted: boolean) {
 
 export default async function TasksPage(props: PageProps) {
   const params = await props.params;
+  const searchParams = await props.searchParams;
   const plan = await getTasks(params.id);
-  const categories = (plan.categories as DbCategory[] | null) || [];
-  const filter = props.searchParams.filter || "all";
-  const sortBy = props.searchParams.sortBy || "category";
+
+  // Create default categories from TaskCategory enum if plan.categories is empty
+  const defaultCategories = Object.values(TaskCategory).map((category) => ({
+    name: category as TaskCategory,
+    description: "",
+    icon: "",
+  }));
+
+  const categories =
+    (plan.categories as DbCategory[] | null) || defaultCategories;
+  const filter = searchParams.filter || "all";
+  const sortBy = searchParams.sortBy || "category";
 
   // Filter tasks based on the filter parameter
   const filteredTasks = plan.tasks.filter((task) => {
