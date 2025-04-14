@@ -31,6 +31,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Category } from "@prisma/client";
 import { Textarea } from "@/components/ui/textarea";
+import PhoneInput from "react-phone-number-input";
 
 interface IState {
   name: string;
@@ -64,6 +65,8 @@ export default function VendorInterestForm() {
   const [openCountry, setOpenCountry] = useState(false);
   const [openState, setOpenState] = useState(false);
   const [openCategories, setOpenCategories] = useState(false);
+  const [filteredCountries, setFilteredCountries] = useState(countries);
+  const [filteredStates, setFilteredStates] = useState<IState[]>([]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -87,11 +90,32 @@ export default function VendorInterestForm() {
         selectedCountry
       ) as IState[];
       setStates(countryStates);
+      setFilteredStates(countryStates);
       if (form.getValues("state")) {
         form.setValue("state", "");
       }
     }
   }, [selectedCountry, form]);
+
+  const handleCountrySearch = (value: string) => {
+    const searchTerm = value.toLowerCase();
+    const filtered = countries.filter(
+      (country) =>
+        country.name.toLowerCase().includes(searchTerm) ||
+        country.isoCode.toLowerCase().includes(searchTerm)
+    );
+    setFilteredCountries(filtered);
+  };
+
+  const handleStateSearch = (value: string) => {
+    const searchTerm = value.toLowerCase();
+    const filtered = states.filter(
+      (state) =>
+        state.name.toLowerCase().includes(searchTerm) ||
+        state.isoCode.toLowerCase().includes(searchTerm)
+    );
+    setFilteredStates(filtered);
+  };
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -155,10 +179,12 @@ export default function VendorInterestForm() {
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Your phone number"
-                    type="tel"
-                    {...field}
+                  <PhoneInput
+                    international
+                    defaultCountry="US"
+                    value={field.value}
+                    onChange={(value) => field.onChange(value || "")}
+                    className="flex h-9 w-full [&>input]:focus:outline-none rounded-md border px-3 py-2 text-sm shadow-sm"
                   />
                 </FormControl>
                 <FormMessage />
@@ -194,13 +220,16 @@ export default function VendorInterestForm() {
                   </PopoverTrigger>
                   <PopoverContent className="p-0">
                     <Command>
-                      <CommandInput placeholder="Search country..." />
+                      <CommandInput
+                        placeholder="Search country..."
+                        onValueChange={handleCountrySearch}
+                      />
                       <CommandEmpty>No country found.</CommandEmpty>
                       <CommandGroup className="max-h-[200px] overflow-auto">
-                        {countries.map((country) => (
+                        {filteredCountries.map((country) => (
                           <CommandItem
                             key={country.isoCode}
-                            value={country.isoCode}
+                            value={country.name}
                             onSelect={() => {
                               form.setValue("country", country.isoCode);
                               setOpenCountry(false);
@@ -253,13 +282,16 @@ export default function VendorInterestForm() {
                   </PopoverTrigger>
                   <PopoverContent className="p-0">
                     <Command>
-                      <CommandInput placeholder="Search state..." />
+                      <CommandInput
+                        placeholder="Search state..."
+                        onValueChange={handleStateSearch}
+                      />
                       <CommandEmpty>No state found.</CommandEmpty>
                       <CommandGroup className="max-h-[200px] overflow-auto">
-                        {states.map((state) => (
+                        {filteredStates.map((state) => (
                           <CommandItem
                             key={state.isoCode}
-                            value={state.isoCode}
+                            value={state.name}
                             onSelect={() => {
                               form.setValue("state", state.isoCode);
                               setOpenState(false);
@@ -290,7 +322,7 @@ export default function VendorInterestForm() {
           control={form.control}
           name="categories"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
+            <FormItem>
               <FormLabel>Service Categories</FormLabel>
               <Popover open={openCategories} onOpenChange={setOpenCategories}>
                 <PopoverTrigger asChild>
