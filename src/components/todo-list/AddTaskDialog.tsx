@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatTaskCategory } from "@/lib/utils";
 import { TaskCategory } from "@prisma/client";
 
 interface AddTaskDialogProps {
@@ -153,7 +153,7 @@ export function AddTaskDialog({ planId, categories }: AddTaskDialogProps) {
               <SelectContent className="overflow-y-scroll">
                 {categories.map((category) => (
                   <SelectItem key={category.name} value={category.name}>
-                    {category.name}
+                    {formatTaskCategory(category.name)}
                   </SelectItem>
                 ))}
               </SelectContent>

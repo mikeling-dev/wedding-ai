@@ -3,6 +3,7 @@ import { isToday, isTomorrow, isPast } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TaskItem } from "@/components/todo-list/TaskItem";
 import { TaskCategory } from "@prisma/client";
+import { formatTaskCategory } from "@/lib/utils";
 
 interface Task {
   id: string;
@@ -120,7 +121,7 @@ export function TasksByDate({ tasks, onToggle }: TasksByDateProps) {
                           }}
                         />
                         <p className="bg-primary/10 text-primary rounded-sm px-2 w-fit ml-7 mt-2">
-                          {task.category}
+                          {formatTaskCategory(task.category)}
                         </p>
                       </div>
                     ))}

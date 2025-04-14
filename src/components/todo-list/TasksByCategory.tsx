@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TaskItem } from "@/components/todo-list/TaskItem";
 import { TaskCategory } from "@prisma/client";
+import { formatTaskCategory } from "@/lib/utils";
 
 interface Task {
   id: string;
@@ -33,13 +34,6 @@ export function TasksByCategory({
           description: "", // No description available for auto-generated categories
         }));
 
-  // Helper function to format category name for display
-  const formatCategoryName = (category: TaskCategory) => {
-    return category
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
-  };
   return (
     <div className="grid gap-4">
       {effectiveCategories.map((category) => {
@@ -55,7 +49,7 @@ export function TasksByCategory({
           >
             <CardHeader className="flex flex-row justify-between">
               <div>
-                <CardTitle>{formatCategoryName(category.name)}</CardTitle>
+                <CardTitle>{formatTaskCategory(category.name)}</CardTitle>
                 {category.description && (
                   <p className="text-sm text-muted-foreground mt-1">
                     {category.description}
