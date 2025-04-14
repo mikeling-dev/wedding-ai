@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/lib/hooks/useAuth";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -21,7 +22,6 @@ interface PricingTierProps {
   price: string;
   description: string;
   features: PricingFeature[];
-  buttonText: string;
   onSubscribe: () => void;
   popular?: boolean;
 }
@@ -31,10 +31,11 @@ const PricingTier = ({
   price,
   description,
   features,
-  buttonText,
   onSubscribe,
   popular,
 }: PricingTierProps) => {
+  const { user } = useAuth();
+
   return (
     <Card
       className={`w-[280px] sm:w-[300px] md:w-full md:min-w-[400px] h-full ${
@@ -86,8 +87,9 @@ const PricingTier = ({
           className={`w-full ${name === "Basic" && "hidden"}`}
           variant={popular ? "default" : "outline"}
           onClick={onSubscribe}
+          disabled={user?.subscription === "PREMIUM"}
         >
-          {buttonText}
+          {user?.subscription === "BASIC" ? "Subscribe" : "Subscribed"}
         </Button>
       </CardFooter>
     </Card>
@@ -103,8 +105,8 @@ export default function Pricing() {
     { text: "Generate or regenerate plans up to 3 times", included: true },
     { text: "Generate plan with basic preferences input", included: true },
     { text: "Uses GPT-4o-mini model for simpler planning", included: true },
-    { text: "ToDo list with up to 10 tasks", included: true },
-    { text: "Access to marketplace", included: true },
+    { text: "ToDo list with up to 20 tasks", included: true },
+    { text: "Wedding marketplace (WIP)", included: true },
     // { text: "Religion & cultural background preferences", included: false },
     // { text: "Special requests in plan generation", included: false },
     // { text: "Up to 30 tasks in todo lists", included: false },
@@ -118,13 +120,13 @@ export default function Pricing() {
       included: true,
     },
     { text: "Uses GPT-4o for intelligent planning", included: true },
-    { text: "Up to 30 tasks in todo list", included: true },
-    { text: "Access to marketplace", included: true },
+    { text: "ToDo list with no limit", included: true },
+    { text: "Wedding marketplace (WIP)", included: true },
     { text: "Religion & cultural background preferences", included: true },
     { text: "Special requests in plan generation", included: true },
-    { text: "Guestlist management", included: true },
+    { text: "Guestlist management (WIP)", included: true },
     {
-      text: "Partner also unlocks all your premium access",
+      text: "Premium perks shared with partner",
       included: true,
     },
   ];
@@ -137,7 +139,6 @@ export default function Pricing() {
           price="Free"
           description="Perfect for getting started with AI wedding planning"
           features={basicFeatures}
-          buttonText="Get Started"
           onSubscribe={handleSubscribe}
         />
       </div>
@@ -147,7 +148,6 @@ export default function Pricing() {
           price="$4"
           description="For couples who want the full planning experience"
           features={premiumFeatures}
-          buttonText="Subscribe"
           onSubscribe={handleSubscribe}
           popular={true}
         />

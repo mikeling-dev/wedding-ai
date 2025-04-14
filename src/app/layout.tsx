@@ -22,7 +22,7 @@ const dancingScript = Dancing_Script({
 });
 
 export const metadata: Metadata = {
-  title: "Wedding Wizard",
+  title: "Vibe Wedding",
   description: "AI Wedding Planner",
 };
 

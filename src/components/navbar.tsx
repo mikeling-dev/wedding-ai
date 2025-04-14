@@ -109,7 +109,7 @@ export default function Navbar() {
       <nav className="shadow-sm">
         <div className="w-full px-4 py-2 flex justify-between">
           <Link href="/" className="dancing-text text-3xl font-bold">
-            Wedding AI
+            VibeWedding
           </Link>
           {user ? (
             <div className="flex flex-row gap-2 md:gap-4 items-center justify-center">
@@ -129,7 +129,7 @@ export default function Navbar() {
                         href="/"
                         className="dancing-text text-3xl font-bold"
                       >
-                        Wedding AI
+                        Vibe Wedding
                       </Link>
                     </SheetTitle>
                     <MenuContent
