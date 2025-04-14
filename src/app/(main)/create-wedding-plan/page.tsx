@@ -25,7 +25,7 @@ export default function CreateWeddingPlan() {
           <ArrowLeft /> Home
         </Button>
       </Link>
-      <div className="w-full flex flex-col items-center gap-4  text-center">
+      <div className="w-full flex flex-col items-center gap-4 mt-2 text-center">
         <h1 className="w-fit text-2xl font-bold">Create your wedding plan</h1>
         <p>
           Tell us about your wedding and let our AI assistant help you plan your

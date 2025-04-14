@@ -133,7 +133,7 @@ export default function FormStep1({
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full overflow-x-hidden">
                       <SelectValue placeholder="Select cultural background" />
                     </SelectTrigger>
                   </FormControl>
