@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Link from "next/link";
 
 interface TaskItemProps {
   id: string;
@@ -84,42 +85,44 @@ export function TaskItem({
           className="mt-2"
           disabled={isPending}
         />
-        <div className="flex-1 space-y-1">
-          <div className="flex items-center justify-between">
-            <p
-              onClick={() => router.push(`/task/${id}`)}
-              className={`hover:underline cursor-pointer ${
-                optimisticIsCompleted ? "text-muted-foreground" : ""
-              }`}
-            >
-              {title}
-            </p>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setDeleteDialogOpen(true)}
-              className="h-8 w-8 text-muted-foreground hover:text-destructive"
-              disabled={isPending}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+        <div className="flex-1 flex flex-row justify-between">
+          <div className="flex flex-col gap-2 w-full">
+            <Link href={`/task/${id}`}>
+              <p
+                onClick={() => router.push(`/task/${id}`)}
+                className={`hover:underline cursor-pointer ${
+                  optimisticIsCompleted ? "text-muted-foreground" : ""
+                }`}
+              >
+                {title}
+              </p>
+              {description && (
+                <p
+                  className={`text-sm ${
+                    optimisticIsCompleted
+                      ? " text-muted-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {description}
+                </p>
+              )}
+              {dueDate && (
+                <p className="text-sm font-medium text-muted-foreground">
+                  Due: {format(new Date(dueDate), "PPP")}
+                </p>
+              )}
+            </Link>
           </div>
-          {description && (
-            <p
-              className={`text-sm ${
-                optimisticIsCompleted
-                  ? " text-muted-foreground"
-                  : "text-muted-foreground"
-              }`}
-            >
-              {description}
-            </p>
-          )}
-          {dueDate && (
-            <p className="text-sm font-medium text-muted-foreground">
-              Due: {format(new Date(dueDate), "PPP")}
-            </p>
-          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setDeleteDialogOpen(true)}
+            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+            disabled={isPending}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 

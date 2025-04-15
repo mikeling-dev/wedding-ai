@@ -88,7 +88,7 @@ export function WeddingList() {
     return (
       <div className="w-full py-8 px-6 md:px-12">
         <div className="w-full flex flex-row justify-between">
-          <h2 className="text-2xl font-semibold mb-4">Your Wedding Plans</h2>
+          <h2 className="text-2xl font-semibold mb-4">Your Wedding Plan</h2>
           <Link href="/create-wedding-plan">
             <Button>Create plan</Button>
           </Link>

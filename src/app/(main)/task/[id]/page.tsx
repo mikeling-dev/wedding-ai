@@ -2,15 +2,12 @@ import { notFound } from "next/navigation";
 import { TaskDetail } from "@/components/task-detail/TaskDetail";
 import { prisma } from "@/lib/prisma";
 
-interface TaskDetailPageProps {
-  params: {
-    id: string;
-  };
-  searchParams: { [key: string]: string | string[] | undefined };
-}
+type PageProps = {
+  params: Promise<{ id: string }>;
+};
 
-export default async function TaskDetailPage({ params }: TaskDetailPageProps) {
-  const { id } = params;
+const page = async ({ params }: PageProps) => {
+  const { id } = await params;
 
   const task = await prisma.task.findUnique({
     where: {
@@ -27,4 +24,6 @@ export default async function TaskDetailPage({ params }: TaskDetailPageProps) {
       <TaskDetail task={task} />
     </div>
   );
-}
+};
+
+export default page;
