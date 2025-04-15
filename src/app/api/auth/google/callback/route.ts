@@ -78,7 +78,11 @@ export async function GET(req: NextRequest) {
     sameSite: "lax",
   });
 
-  const homeUrl = `http://localhost:3000/`;
+  const homeUrl = `${
+    process.env.NEXT_PUBLIC_VERCEL_URL
+      ? process.env.NEXT_PUBLIC_VERCEL_URL
+      : "http://localhost:3000/"
+  }`;
   return NextResponse.redirect(homeUrl, {
     headers: { "Set-Cookie": cookie },
   });
