@@ -5,9 +5,10 @@ import { NextRequest } from "next/server";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
   try {
+    const { id } = await params;
     const user = getUserFromToken(request);
     if (!user) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -16,7 +17,7 @@ export async function DELETE(
     // Check if the user has permission to delete this wedding
     const weddingUser = await prisma.weddingUser.findFirst({
       where: {
-        weddingId: params.id,
+        weddingId: id,
         userId: user.userId,
       },
     });
@@ -30,26 +31,26 @@ export async function DELETE(
       // Delete wedding users
       prisma.weddingUser.deleteMany({
         where: {
-          weddingId: params.id,
+          weddingId: id,
         },
       }),
       // Delete wedding plan and associated tasks
       prisma.task.deleteMany({
         where: {
           plan: {
-            weddingId: params.id,
+            weddingId: id,
           },
         },
       }),
       prisma.plan.deleteMany({
         where: {
-          weddingId: params.id,
+          weddingId: id,
         },
       }),
       // Delete the wedding itself
       prisma.wedding.delete({
         where: {
-          id: params.id,
+          id: id,
         },
       }),
     ]);

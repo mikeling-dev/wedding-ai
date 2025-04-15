@@ -5,6 +5,8 @@ import { WeddingRole } from "@prisma/client";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   if (!token) {

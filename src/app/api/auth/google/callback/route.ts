@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
@@ -78,11 +80,10 @@ export async function GET(req: NextRequest) {
     sameSite: "lax",
   });
 
-  const homeUrl = `${
-    process.env.NEXT_PUBLIC_VERCEL_URL
-      ? process.env.NEXT_PUBLIC_VERCEL_URL
-      : "http://localhost:3000/"
-  }`;
+  const homeUrl = process.env.NEXT_PUBLIC_VERCEL_URL
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+    : "http://localhost:3000";
+
   return NextResponse.redirect(homeUrl, {
     headers: { "Set-Cookie": cookie },
   });
