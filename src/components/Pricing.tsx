@@ -31,7 +31,6 @@ const PricingTier = ({
   price,
   description,
   features,
-  onSubscribe,
   popular,
 }: PricingTierProps) => {
   const { user } = useAuth();
@@ -93,14 +92,17 @@ const PricingTier = ({
         </ul>
       </CardContent>
       <CardFooter>
-        <Button
-          className={`w-full ${name === "Basic" && "hidden"}`}
-          variant={popular ? "default" : "outline"}
-          onClick={onSubscribe}
-          disabled={user?.subscription === "PREMIUM"}
-        >
-          {user?.subscription === "BASIC" ? "Upgrade" : "Upgraded"}
-        </Button>
+        <form action="/api/checkout_sessions" method="POST">
+          <Button
+            className={`w-full ${name === "Basic" && "hidden"}`}
+            variant={popular ? "default" : "outline"}
+            type="submit"
+            role="link"
+            disabled={user?.subscription === "PREMIUM"}
+          >
+            {user?.subscription === "BASIC" ? "Upgrade" : "Upgraded"}
+          </Button>
+        </form>
       </CardFooter>
     </Card>
   );
@@ -108,7 +110,7 @@ const PricingTier = ({
 
 export default function Pricing() {
   const handleSubscribe = () => {
-    console.log("subscribed");
+    // console.log("subscribed");
   };
 
   const basicFeatures = [

@@ -28,6 +28,7 @@ model User {
   weddings       WeddingUser[]  // Changed from Wedding[] to WeddingUser[]
   sentInvitations Invitation[] @relation("SentInvitations")     // Invitations this user sent
   receivedInvitations Invitation[] @relation("ReceivedInvitations") // Invitations this user received
+  payments       Payment[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   vendor         Vendor?      // Optional: If a user is also a vendor
@@ -209,4 +210,24 @@ model VendorInterests {
   updatedAt     DateTime  @updatedAt
 
   @@index([email])
+}
+
+model Payment {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  stripeSessionId String  @unique
+  amount        Float
+  status        PaymentStatus
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([stripeSessionId])
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
 }
