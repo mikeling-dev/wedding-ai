@@ -10,6 +10,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import {
   Select,
@@ -20,7 +21,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Lock } from "lucide-react";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { cn } from "@/lib/utils";
 
 const themes = [
   "Traditional",
@@ -54,6 +57,9 @@ export default function FormStep3({
   onBack,
   defaultValues,
 }: FormStep3Props) {
+  const { user } = useAuth();
+  const isPremium = user?.subscription === "PREMIUM";
+
   const form = useForm<FormStep3Values>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -99,15 +105,24 @@ export default function FormStep3({
           control={form.control}
           name="specialRequests"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Special Requests</FormLabel>
+            <FormItem className={cn(!isPremium && "opacity-50")}>
+              <FormLabel className="flex items-center gap-2">
+                Special Requests
+                {!isPremium && <Lock className="h-4 w-4" />}
+              </FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Tell us about any other preferences, special requests, or important details about your wedding vision (e.g., preferred venue type like hotel ballroom, beachfront, etc.)"
                   className="resize-none"
+                  disabled={!isPremium}
                   {...field}
                 />
               </FormControl>
+              {!isPremium && (
+                <FormDescription>
+                  Upgrade to Premium to add special requests and customizations
+                </FormDescription>
+              )}
               <FormMessage />
             </FormItem>
           )}

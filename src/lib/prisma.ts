@@ -5,7 +5,18 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
-const prisma = global.prisma || new PrismaClient();
+// Disconnect any existing connection before creating a new one
+if (global.prisma) {
+  await global.prisma.$disconnect();
+}
+
+const prismaClientSingleton = () => {
+  return new PrismaClient({
+    log: ["error", "warn"],
+  });
+};
+
+const prisma = global.prisma ?? prismaClientSingleton();
 
 if (process.env.NODE_ENV !== "production") {
   global.prisma = prisma;

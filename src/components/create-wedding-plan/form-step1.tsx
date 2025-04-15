@@ -10,6 +10,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,7 +24,8 @@ import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Lock } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   partner1Name: z
@@ -72,6 +74,8 @@ export default function FormStep1({
   defaultValues,
 }: FormStep1Props) {
   const { user } = useAuth();
+  const isPremium = user?.subscription === "PREMIUM";
+
   const form = useForm<FormStep1Values>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -126,11 +130,15 @@ export default function FormStep1({
             control={form.control}
             name="culturalBackground"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Cultural Background</FormLabel>
+              <FormItem className={cn(!isPremium && "opacity-50")}>
+                <FormLabel className="flex items-center gap-2">
+                  Cultural Background
+                  {!isPremium && <Lock className="h-4 w-4" />}
+                </FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={!isPremium}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
@@ -152,6 +160,11 @@ export default function FormStep1({
                     <SelectItem value="Others">Others</SelectItem>
                   </SelectContent>
                 </Select>
+                {!isPremium && (
+                  <FormDescription>
+                    Upgrade to Premium to unlock cultural customization
+                  </FormDescription>
+                )}
                 <FormMessage />
               </FormItem>
             )}
@@ -161,11 +174,15 @@ export default function FormStep1({
             control={form.control}
             name="religion"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Religion</FormLabel>
+              <FormItem className={cn(!isPremium && "opacity-50")}>
+                <FormLabel className="flex items-center gap-2">
+                  Religion
+                  {!isPremium && <Lock className="h-4 w-4" />}
+                </FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={!isPremium}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
@@ -181,6 +198,11 @@ export default function FormStep1({
                     <SelectItem value="Others">Others</SelectItem>
                   </SelectContent>
                 </Select>
+                {!isPremium && (
+                  <FormDescription>
+                    Upgrade to Premium to unlock religious customization
+                  </FormDescription>
+                )}
                 <FormMessage />
               </FormItem>
             )}
