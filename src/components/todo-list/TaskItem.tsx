@@ -86,7 +86,12 @@ export function TaskItem({
         />
         <div className="flex-1 space-y-1">
           <div className="flex items-center justify-between">
-            <p className={optimisticIsCompleted ? "text-muted-foreground" : ""}>
+            <p
+              onClick={() => router.push(`/task/${id}`)}
+              className={`hover:underline cursor-pointer ${
+                optimisticIsCompleted ? "text-muted-foreground" : ""
+              }`}
+            >
               {title}
             </p>
             <Button
