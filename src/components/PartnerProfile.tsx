@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import { setLoading } from "@/store/slices/loadingSlice";
 import { clearPartner } from "@/store/slices/partnerSlice";
-import { useWeddings } from "@/lib/hooks/useWeddings";
+import { setWeddings } from "@/store/slices/weddingSlice";
 
 const PartnerProfile = () => {
   const { partner } = useAuth();
@@ -27,7 +27,6 @@ const PartnerProfile = () => {
   const isLoading = useSelector(
     (state: RootState) => state.loading["invitation/handle"] || false
   );
-  const { mutate: refetchWeddings } = useWeddings();
   const [inviteOpen, setInviteOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [pendingUnlink, setPendingUnlink] = useState(false);
@@ -80,7 +79,14 @@ const PartnerProfile = () => {
       }
 
       dispatch(clearPartner());
-      await refetchWeddings();
+
+      // Fetch weddings only when unlinking partner
+      const weddingsResponse = await fetch("/api/wedding");
+      if (weddingsResponse.ok) {
+        const weddingsData = await weddingsResponse.json();
+        dispatch(setWeddings(weddingsData));
+      }
+
       setProfileOpen(false);
       setPendingUnlink(false);
 

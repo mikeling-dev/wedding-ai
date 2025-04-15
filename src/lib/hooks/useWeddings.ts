@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import {
@@ -15,6 +15,7 @@ export function useWeddings() {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
+  const initialFetchDone = useRef(false);
 
   const fetchWeddings = async () => {
     if (!isAuthenticated) {
@@ -43,8 +44,11 @@ export function useWeddings() {
   };
 
   useEffect(() => {
-    fetchWeddings();
-  }, [isAuthenticated, dispatch]);
+    if (!initialFetchDone.current && isAuthenticated) {
+      fetchWeddings();
+      initialFetchDone.current = true;
+    }
+  }, [isAuthenticated]);
 
   return { weddings, loading, error, mutate: fetchWeddings };
 }

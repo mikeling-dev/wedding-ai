@@ -4,12 +4,13 @@ import { setToken, clearAuth } from "../../store/slices/authSlice";
 import { setUser, clearUser } from "../../store/slices/userSlice";
 import { setPartner, clearPartner } from "../../store/slices/partnerSlice";
 import { clearWeddings } from "../../store/slices/weddingSlice";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 export function useAuth() {
   const dispatch = useDispatch();
   const router = useRouter();
+  const initialAuthCheckDone = useRef(false);
 
   const token = useSelector((state: RootState) => state.auth.token);
   const isAuthenticated = useSelector(
@@ -20,6 +21,9 @@ export function useAuth() {
 
   useEffect(() => {
     const checkAuth = async () => {
+      // Skip if we've already done the initial auth check or if we already have a user
+      if (initialAuthCheckDone.current || user) return;
+
       const tokenFromCookie = document.cookie
         .split("; ")
         .find((row) => row.startsWith("token="))
@@ -54,10 +58,12 @@ export function useAuth() {
       } else {
         clearAllState();
       }
+
+      initialAuthCheckDone.current = true;
     };
 
     checkAuth();
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   const clearAllState = () => {
     dispatch(clearAuth());

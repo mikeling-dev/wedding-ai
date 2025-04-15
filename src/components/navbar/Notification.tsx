@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPartner } from "@/store/slices/partnerSlice";
 import { setLoading } from "@/store/slices/loadingSlice";
 import { RootState } from "@/lib/store";
-import { useWeddings } from "@/lib/hooks/useWeddings";
+import { setWeddings } from "@/store/slices/weddingSlice";
 
 interface Invitation {
   id: string;
@@ -24,17 +24,84 @@ interface Invitation {
   status: "PENDING" | "ACCEPTED" | "DENIED";
 }
 
+const NotificationContent = memo(
+  ({
+    invitations,
+    handleInvitation,
+    isLoading,
+  }: {
+    invitations: Invitation[];
+    handleInvitation: (id: string, action: "accept" | "reject") => void;
+    isLoading: boolean;
+  }) => (
+    <div className="space-y-4">
+      <h4 className="font-medium">Partner Invitations</h4>
+      {invitations.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No pending invitations</p>
+      ) : (
+        <div className="space-y-2">
+          {invitations.map((invitation) => (
+            <div
+              key={invitation.id}
+              className="flex items-center justify-between gap-2 p-2 border rounded-lg"
+            >
+              <div className="flex items-center gap-2">
+                <Avatar>
+                  <AvatarImage src={invitation.sender.picture || undefined} />
+                  <AvatarFallback>
+                    {invitation.sender.name?.[0] || "?"}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm font-medium">
+                    {invitation.sender.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {invitation.sender.email}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => handleInvitation(invitation.id, "accept")}
+                  disabled={isLoading}
+                >
+                  Accept
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleInvitation(invitation.id, "reject")}
+                  disabled={isLoading}
+                >
+                  Reject
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+);
+
+NotificationContent.displayName = "NotificationContent";
+
 const Notifications = () => {
   const { user } = useAuth();
   const dispatch = useDispatch();
   const isLoading = useSelector(
     (state: RootState) => state.loading["invitation/handle"] || false
   );
-  const { mutate: refetchWeddings } = useWeddings();
+  const initialFetchDone = useRef(false);
+  const [open, setOpen] = useState(false);
 
   const [invitations, setInvitations] = useState<Invitation[]>([]);
 
   const fetchInvitations = async () => {
+    if (!user || initialFetchDone.current) return;
+
     try {
       const response = await fetch("/api/invitations", {
         credentials: "include",
@@ -42,6 +109,7 @@ const Notifications = () => {
       if (response.ok) {
         const data = await response.json();
         setInvitations(data);
+        initialFetchDone.current = true;
       }
     } catch (error) {
       console.error("Error fetching invitations:", error);
@@ -49,9 +117,7 @@ const Notifications = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      fetchInvitations();
-    }
+    fetchInvitations();
   }, [user]);
 
   const handleInvitation = async (
@@ -83,7 +149,12 @@ const Notifications = () => {
           dispatch(setPartner(partnerData));
         }
 
-        await refetchWeddings();
+        // Fetch weddings only when accepting an invitation
+        const weddingsResponse = await fetch("/api/wedding");
+        if (weddingsResponse.ok) {
+          const weddingsData = await weddingsResponse.json();
+          dispatch(setWeddings(weddingsData));
+        }
       }
 
       toast.success(
@@ -106,7 +177,7 @@ const Notifications = () => {
   };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
@@ -118,59 +189,11 @@ const Notifications = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-fit bg-card">
-        <div className="space-y-4">
-          <h4 className="font-medium">Partner Invitations</h4>
-          {invitations.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No pending invitations
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {invitations.map((invitation) => (
-                <div
-                  key={invitation.id}
-                  className="flex items-center justify-between gap-2 p-2 border rounded-lg"
-                >
-                  <div className="flex items-center gap-2">
-                    <Avatar>
-                      <AvatarImage
-                        src={invitation.sender.picture || undefined}
-                      />
-                      <AvatarFallback>
-                        {invitation.sender.name?.[0] || "?"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium">
-                        {invitation.sender.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {invitation.sender.email}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => handleInvitation(invitation.id, "accept")}
-                      disabled={isLoading}
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleInvitation(invitation.id, "reject")}
-                      disabled={isLoading}
-                    >
-                      Reject
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <NotificationContent
+          invitations={invitations}
+          handleInvitation={handleInvitation}
+          isLoading={isLoading}
+        />
       </PopoverContent>
     </Popover>
   );
