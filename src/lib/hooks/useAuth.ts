@@ -4,7 +4,7 @@ import { setToken, clearAuth } from "../../store/slices/authSlice";
 import { setUser, clearUser } from "../../store/slices/userSlice";
 import { setPartner, clearPartner } from "../../store/slices/partnerSlice";
 import { clearWeddings } from "../../store/slices/weddingSlice";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 export function useAuth() {
@@ -18,6 +18,13 @@ export function useAuth() {
   );
   const user = useSelector((state: RootState) => state.user.profile);
   const partner = useSelector((state: RootState) => state.partner.partner);
+
+  const clearAllState = useCallback(() => {
+    dispatch(clearAuth());
+    dispatch(clearUser());
+    dispatch(clearPartner());
+    dispatch(clearWeddings());
+  }, [dispatch]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -63,14 +70,7 @@ export function useAuth() {
     };
 
     checkAuth();
-  }, [dispatch, user]);
-
-  const clearAllState = () => {
-    dispatch(clearAuth());
-    dispatch(clearUser());
-    dispatch(clearPartner());
-    dispatch(clearWeddings());
-  };
+  }, [dispatch, user, clearAllState]);
 
   const login = () => {
     window.location.href = "/api/auth/google";

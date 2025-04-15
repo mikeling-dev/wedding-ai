@@ -10,7 +10,7 @@ interface TaskDetailPageProps {
 }
 
 export default async function TaskDetailPage({ params }: TaskDetailPageProps) {
-  const { id } = await params;
+  const { id } = params;
 
   const task = await prisma.task.findUnique({
     where: {

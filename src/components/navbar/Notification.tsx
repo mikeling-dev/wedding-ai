@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, memo } from "react";
+import { useEffect, useRef, useState, memo, useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -99,7 +99,7 @@ const Notifications = () => {
 
   const [invitations, setInvitations] = useState<Invitation[]>([]);
 
-  const fetchInvitations = async () => {
+  const fetchInvitations = useCallback(async () => {
     if (!user || initialFetchDone.current) return;
 
     try {
@@ -114,11 +114,11 @@ const Notifications = () => {
     } catch (error) {
       console.error("Error fetching invitations:", error);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchInvitations();
-  }, [user]);
+  }, [user, fetchInvitations]);
 
   const handleInvitation = async (
     invitationId: string,

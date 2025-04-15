@@ -47,7 +47,7 @@ export default function EditWeddingPage() {
     };
 
     fetchWedding();
-  }, [params.id]);
+  }, [params.id, user, router]);
 
   if (loading) {
     return <div>Loading...</div>;
