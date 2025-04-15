@@ -34,7 +34,7 @@ export default function MarketplaceSection() {
             <Button variant="outline" disabled>
               Marketplace Coming Soon
             </Button>
-            <Link href="/vendor">
+            <Link href="/vendor/interest-form">
               <Button>Become a Vendor</Button>
             </Link>
           </div>
