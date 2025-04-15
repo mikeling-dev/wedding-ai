@@ -55,14 +55,15 @@ const PricingTier = ({
           <span className="text-3xl font-bold">
             {price}{" "}
             {price !== "Free" && (
-              <span className="line-through text-muted-foreground">$16</span>
+              <span className="line-through text-muted-foreground">$20</span>
             )}
           </span>
           {price !== "Free" && (
             <p className="text-muted-foreground text-sm border py-2 px-4 text-center rounded-lg mt-1">
-              One-off payment,{" "}
-              <span className="font-semibold">life time access</span>. Promotion
-              available until marketplace launches.
+              <span className="font-semibold">
+                One-off payment, life time access
+              </span>
+              . 50% off until marketplace launches.
             </p>
           )}
         </div>
@@ -98,7 +99,7 @@ const PricingTier = ({
           onClick={onSubscribe}
           disabled={user?.subscription === "PREMIUM"}
         >
-          {user?.subscription === "BASIC" ? "Subscribe" : "Subscribed"}
+          {user?.subscription === "BASIC" ? "Upgrade" : "Upgraded"}
         </Button>
       </CardFooter>
     </Card>
@@ -111,7 +112,7 @@ export default function Pricing() {
   };
 
   const basicFeatures = [
-    { text: "Generate or regenerate plans up to 3 times", included: true },
+    { text: "Generate plans for up to 3 times", included: true },
     { text: "Generate plan with basic preferences input", included: true },
     { text: "Uses GPT-4o-mini model for simpler planning", included: true },
     { text: "ToDo list with up to 20 tasks", included: true },
@@ -123,7 +124,7 @@ export default function Pricing() {
   ];
 
   const premiumFeatures = [
-    { text: "Generate or regenerate plans up to 10 times", included: true },
+    { text: "Generate plans for up to 10 times", included: true },
     {
       text: "Generate plan with advanced preferences input",
       included: true,

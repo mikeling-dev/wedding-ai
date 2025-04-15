@@ -21,6 +21,7 @@ model User {
   name           String?
   picture        String?
   subscription   Tier         @default(BASIC)
+  generatedCount Int          @default(0)
   partnerId      String?      @unique // Foreign key to partner's id
   partner        User?        @relation("PartnerRelation", fields: [partnerId], references: [id])
   inversePartner User?        @relation("PartnerRelation")

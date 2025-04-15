@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
         picture: user.picture,
         partnerId: user.partnerId,
         subscription: user.subscription,
+        generatedCount: user.generatedCount,
       },
     });
   } catch {

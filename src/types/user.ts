@@ -7,6 +7,7 @@ export interface User {
   partnerId: string | null;
   weddingId: string | null;
   receivedInvitations: string[];
+  generatedCount: number;
 }
 
 export interface UserState {

@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 import { TaskCategory } from "@prisma/client";
+import { checkTierForPlanGeneration } from "@/lib/utils";
 
 interface TodoListItem {
   title: string;
@@ -22,7 +23,7 @@ const categoryMap: { [key: string]: TaskCategory } = {
   venue: "VENUE",
   catering: "CATERING",
   transportation: "TRANSPORTATION",
-  "cake & dessert": "CAKE_AND_DESSERT",
+  cakeAndDessert: "CAKE_AND_DESSERT",
   photography: "PHOTOGRAPHY",
   attire: "ATTIRE",
   entertainment: "ENTERTAINMENT",
@@ -56,16 +57,21 @@ export async function POST(req: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { subscription: true },
+      select: {
+        subscription: true,
+        generatedCount: true,
+      },
     });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // if (user.weddings && user.subscription === "BASIC") {
-    //     return NextResponse.json({error: "Exceed wedding limit, "})
-    // }
+    // Check generation limits based on subscription tier
+    const { hasReachedLimit, errorMessage } = checkTierForPlanGeneration(user);
+    if (hasReachedLimit) {
+      return NextResponse.json({ error: errorMessage }, { status: 403 });
+    }
 
     // Get wedding details from request body
     const weddingDetails = await req.json();
@@ -265,6 +271,12 @@ export async function POST(req: NextRequest) {
     const planWithTasks = await prisma.plan.findUnique({
       where: { id: savedPlan.id },
       include: { tasks: true },
+    });
+
+    // After successfully creating the plan, increment the generatedCount
+    await prisma.user.update({
+      where: { id: decoded.userId },
+      data: { generatedCount: user.generatedCount + 1 },
     });
 
     return NextResponse.json({ plan: planWithTasks });

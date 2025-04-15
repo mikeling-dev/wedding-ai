@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { checkTierForPlanGeneration } from "@/lib/utils";
 
 export default function CreateWeddingPlan() {
   const { user } = useAuth();
@@ -15,6 +16,13 @@ export default function CreateWeddingPlan() {
   useEffect(() => {
     if (!user) {
       router.push("/auth");
+      return;
+    }
+
+    const { hasReachedLimit } = checkTierForPlanGeneration(user);
+
+    if (hasReachedLimit) {
+      router.push("/upgrade-premium");
     }
   }, [user, router]);
 
