@@ -6,10 +6,11 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const task = await prisma.task.update({
       where: {
-        id: params.id,
+        id,
       },
       data: body,
     });
