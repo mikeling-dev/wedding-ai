@@ -62,7 +62,7 @@ async function toggleTask(taskId: string, isCompleted: boolean) {
     });
 
     // Revalidate the tasks page to update the task counts and progress
-    revalidatePath("/wedding/[id]/tasks");
+    revalidatePath("/wedding/[id]/tasks", "page");
   } catch (error) {
     console.error("Error updating task:", error);
     throw error;
