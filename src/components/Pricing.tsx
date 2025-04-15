@@ -117,7 +117,7 @@ export default function Pricing() {
     { text: "Generate plans for up to 3 times", included: true },
     { text: "Generate plan with basic preferences input", included: true },
     { text: "Uses GPT-4o-mini model for simpler planning", included: true },
-    { text: "ToDo list with up to 20 tasks", included: true },
+    { text: "Customizable To-Do list", included: true },
     { text: "Wedding marketplace (WIP)", included: true },
     // { text: "Religion & cultural background preferences", included: false },
     // { text: "Special requests in plan generation", included: false },
@@ -132,15 +132,11 @@ export default function Pricing() {
       included: true,
     },
     { text: "Uses GPT-4o for intelligent planning", included: true },
-    { text: "ToDo list with no limit", included: true },
+    { text: "Customizable To-Do list", included: true },
     { text: "Wedding marketplace (WIP)", included: true },
+    { text: "Guestlist management (WIP)", included: true },
     { text: "Religion & cultural background preferences", included: true },
     { text: "Special requests in plan generation", included: true },
-    { text: "Guestlist management (WIP)", included: true },
-    {
-      text: "Premium perks shared with partner",
-      included: true,
-    },
   ];
 
   return (
