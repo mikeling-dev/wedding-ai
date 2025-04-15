@@ -21,7 +21,7 @@ import { clearPartner } from "@/store/slices/partnerSlice";
 import { setWeddings } from "@/store/slices/weddingSlice";
 
 const PartnerProfile = () => {
-  const { partner } = useAuth();
+  const { partner, user } = useAuth();
   const [email, setEmail] = useState("");
   const dispatch = useDispatch();
   const isLoading = useSelector(
@@ -33,6 +33,12 @@ const PartnerProfile = () => {
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (email === user?.email) {
+      toast.error("Failed to send invitation!", {
+        description: `Cannot send invitation to yourself.`,
+      });
+      return;
+    }
     dispatch(setLoading({ key: "invitation/handle", isLoading: true }));
 
     try {
