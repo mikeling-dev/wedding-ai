@@ -121,7 +121,7 @@ export default function FormStep1({
             )}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4 w-full">
+        <div className="grid md:grid-cols-2 gap-4 w-full">
           <FormField
             control={form.control}
             name="culturalBackground"
@@ -133,7 +133,7 @@ export default function FormStep1({
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger className="w-full overflow-x-hidden">
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select cultural background" />
                     </SelectTrigger>
                   </FormControl>
