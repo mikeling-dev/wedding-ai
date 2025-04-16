@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Dancing_Script } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/ReduxProvider";
+import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -40,6 +41,7 @@ export default function RootLayout({
           {children}
           <Toaster />
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
